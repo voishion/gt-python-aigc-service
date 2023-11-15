@@ -1,0 +1,12 @@
+fastapi[all]~=0.104.1
+tortoise-orm[aiomysql]
+aioredis
+uvicorn
+PyJWT
+passlib
+openai~=1.2.4
+loguru~=0.7.2
+tortoise~=0.1.1
+starlette~=0.27.0
+pydantic~=2.5.0
+python-dotenv~=1.0.0
