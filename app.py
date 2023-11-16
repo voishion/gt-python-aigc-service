@@ -86,7 +86,6 @@ application.add_exception_handler(IntegrityError, Exception.mysql_integrity_erro
 application.add_exception_handler(ValidationError, Exception.mysql_validation_error)
 application.add_exception_handler(OperationalError, Exception.mysql_operational_error)
 
-
 # 中间件
 application.add_middleware(Middleware.BaseMiddleware)
 

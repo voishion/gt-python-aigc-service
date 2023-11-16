@@ -8,6 +8,7 @@ from fastapi import Depends, HTTPException
 from fastapi import Request
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 
+from common.enums import Scopes
 from core import Utils
 from core.Auth import create_access_token
 
@@ -16,11 +17,13 @@ async def test_oath2(data: OAuth2PasswordRequestForm = Depends()):
     user_type = False
     if not data.scopes:
         raise HTTPException(401, "请选择作用域!")
-    if "is_admin" in data.scopes:
+
+    if Scopes.IS_ADMIN.value in data.scopes:
         user_type = True
     jwt_data = {
-        "user_id": data.client_id,
-        "user_type": user_type
+        "user_id": Utils.random_uuid(),
+        "user_type": user_type,
+        "user_scopes": data.scopes
     }
     jwt_token = create_access_token(data=jwt_data)
 

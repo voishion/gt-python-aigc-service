@@ -12,11 +12,21 @@ from fastapi.security.oauth2 import OAuth2PasswordBearer
 from jwt import PyJWTError
 from pydantic import ValidationError
 from starlette import status
-from config import settings
-from models.base import User, Access
 
-OAuth2 = OAuth2PasswordBearer(settings.SWAGGER_UI_OAUTH2_REDIRECT_URL, scheme_name="User",
-                              scopes={"is_admin": "超级管理员", "not_admin": "普通管理员"})
+from common.enums import Scopes
+from config import settings
+from models.base import User
+
+OAuth2 = OAuth2PasswordBearer(
+    settings.SWAGGER_UI_OAUTH2_REDIRECT_URL,
+    scheme_name="User",
+    scopes={
+        Scopes.IS_ADMIN.value: "超级管理员",
+        Scopes.ACCESS_API.value: "访问接口",
+        Scopes.ACCESS_PAGE.value: "访问页面",
+        Scopes.ACCESS_TEST.value: "访问测试",
+    }
+)
 
 
 def create_access_token(data: dict):
@@ -39,9 +49,9 @@ def create_access_token(data: dict):
 async def check_permissions(req: Request, security_scopes: SecurityScopes, token=Depends(OAuth2)):
     """
     权限验证
-    :param token:
-    :param req:
+    :param req: 请求对象
     :param security_scopes: 权限域
+    :param token: 令牌信息
     :return:
     """
     # ----------------------------------------验证JWT token------------------------------------------------------------
@@ -66,7 +76,7 @@ async def check_permissions(req: Request, security_scopes: SecurityScopes, token
                     headers={"WWW-Authenticate": f"Bearer{token}"},
                 )
                 raise credentials_exception
-
+            user_scopes = payload.get("user_scopes", None)
         else:
             credentials_exception = HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -100,7 +110,7 @@ async def check_permissions(req: Request, security_scopes: SecurityScopes, token
         )
     # ---------------------------------------验证权限-------------------------------------------------------------------
     # 查询用户是否真实有效、或者已经被禁用
-    check_user = await User().get_or_none(id=user_id)
+    check_user = User.of(user_id, user_type, user_scopes)
     if not check_user or check_user.user_status != 1:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -112,8 +122,7 @@ async def check_permissions(req: Request, security_scopes: SecurityScopes, token
         # 非超级管理员且当前域需要验证
         if not user_type and security_scopes.scopes:
             # 未查询用户是否有对应权限
-            is_pass = await Access.filter(
-                role__user__id=user_id, is_check=True, scopes__in=set(security_scopes.scopes)).all()
+            is_pass = check_user.scopes_check(security_scopes.scopes)
             if not is_pass:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
