@@ -15,6 +15,7 @@ from common.enums import Scopes
 from core.Auth import check_permissions
 from core.Response import success
 from schemas import meeting
+from loguru import logger as log
 
 router = APIRouter(prefix='')
 
@@ -28,6 +29,7 @@ async def summary(req: Request, post: meeting.MeetingSummaryReq):
     :param post: CreateAccess
     :return:
     """
-    print(req)
-    print(post)
+    log.info('user_id:{}', req.state.user_id)
+    log.info('user_type:{}', req.state.user_type)
+    log.info('content:{}', post.content)
     return success(msg="会议总结完成", data="会议圆满成功")

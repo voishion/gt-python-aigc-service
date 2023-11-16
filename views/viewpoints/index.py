@@ -11,6 +11,8 @@
 from fastapi import Request, APIRouter
 from fastapi.responses import HTMLResponse
 
+from config import settings
+
 router = APIRouter()
 
 
@@ -21,4 +23,4 @@ async def index(request: Request):
     :param request:
     :return:
     """
-    return request.app.state.views.TemplateResponse("index.html", {"request": request})
+    return request.app.state.views.TemplateResponse("index.html", {"request": request, "title": settings.PROJECT_NAME})

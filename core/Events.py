@@ -13,9 +13,10 @@ from typing import Callable
 from aioredis import Redis
 from fastapi import FastAPI
 
+from config import settings
 from database.mysql import register_mysql
 from database.redis import sys_cache, code_cache
-
+from loguru import logger as log
 
 def startup(app: FastAPI) -> Callable:
     """
@@ -26,12 +27,12 @@ def startup(app: FastAPI) -> Callable:
 
     async def app_start() -> None:
         # APP启动完成后触发
-        print("FastAPI已启动")
+        log.info("{}已启动", settings.PROJECT_NAME)
         # 注册数据库
-        await register_mysql(app)
+        # await register_mysql(app)
         # 注入缓存到app state
-        app.state.cache = await sys_cache()
-        app.state.code_cache = await code_cache()
+        # app.state.cache = await sys_cache()
+        # app.state.code_cache = await code_cache()
 
         pass
 
@@ -47,10 +48,10 @@ def stopping(app: FastAPI) -> Callable:
 
     async def stop_app() -> None:
         # APP停止时触发
-        print("FastAPI已停止")
-        cache: Redis = await app.state.cache
-        code: Redis = await app.state.code_cache
-        await cache.close()
-        await code.close()
+        log.info("{}已停止", settings.PROJECT_NAME)
+        # cache: Redis = await app.state.cache
+        # code: Redis = await app.state.code_cache
+        # await cache.close()
+        # await code.close()
 
     return stop_app

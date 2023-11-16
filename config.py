@@ -25,7 +25,7 @@ class Config(BaseSettings):
     APP_DEBUG: bool = True
     # 项目信息
     VERSION: str = "0.0.1"
-    PROJECT_NAME: str = "FastAPI"
+    PROJECT_NAME: str = "gt-python-aigc-service"
     DESCRIPTION: str = '<a href="/redoc" target="_blank">redoc</a>'
     # 静态资源目录
     STATIC_DIR: str = os.path.join(os.getcwd(), "static")
@@ -40,7 +40,7 @@ class Config(BaseSettings):
     SESSION_COOKIE: str = "session_id"
     SESSION_MAX_AGE: int = 14 * 24 * 60 * 60
     # Jwt
-    JWT_SECRET_KEY: str = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+    JWT_SECRET_KEY: str = "01d35e094faa6cm2556c818166b7v4563b93f7099f0f0f4caa6cf63b86e8d3e0"
     JWT_ALGORITHM: str = "HS256"
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 24 * 60
 
