@@ -46,8 +46,10 @@ class Config(BaseSettings):
 
     SWAGGER_UI_OAUTH2_REDIRECT_URL: str = "/api/v1/test/oath2"
 
-    # 二维码过期时间
-    QRCODE_EXPIRE: int = 60 * 1
+    # CHATGLM3地址
+    CHATGLM3_SERVER_URL: str = "https://esb.gt.cn/v1"
+    # 天气接口KEY
+    SENIVERSE_KEY: str = "Sp-dfPkJHO8lvb055"
 
 
 settings = Config()

@@ -1,0 +1,10 @@
+name: news
+description: Search news information within Genertec Technology Group through keyword
+parameters:
+  type: object
+  properties:
+    keyword:
+      type: string
+      description: Search keyword
+  required:
+    - keyword

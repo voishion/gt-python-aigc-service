@@ -15,21 +15,18 @@ from common.enums import Scopes
 from core.Auth import check_permissions
 from core.Response import success
 from schemas import meeting
-from loguru import logger as log
+from service.meeting_service import MeetingService
 
 router = APIRouter(prefix='')
 
 
-@router.post('/summary', response_model=meeting.MeetingSummaryResp, summary="会议总结",
-             dependencies=[Security(check_permissions, scopes=[Scopes.ACCESS_API.value])])
-async def summary(req: Request, post: meeting.MeetingSummaryReq):
-    """
-    创建权限
-    :param req:
-    :param post: CreateAccess
-    :return:
-    """
-    log.info('user_id:{}', req.state.user_id)
-    log.info('user_type:{}', req.state.user_type)
-    log.info('content:{}', post.content)
-    return success(msg="会议总结完成", data="会议圆满成功")
+@router.post(
+    path='/summary',
+    response_model=meeting.MeetingSummaryResp,
+    summary="会议总结",
+    description="通过人工智能实现文字会议纪要的总结",
+    dependencies=[Security(check_permissions, scopes=[Scopes.ACCESS_API.value])]
+)
+async def summary(post: meeting.MeetingSummaryReq):
+    result = MeetingService().meeting_summary(post.content)
+    return success(msg="会议总结完成", data=result)

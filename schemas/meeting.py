@@ -16,7 +16,7 @@ from schemas.base import BaseResp
 
 
 class MeetingSummaryReq(BaseModel):
-    content: Optional[str] = Field(min_length=1, max_length=10, description="会议内容")
+    content: Optional[str] = Field(min_length=1, max_length=999999, description="会议内容")
 
 
 class MeetingSummaryResp(BaseResp):
