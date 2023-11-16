@@ -3,7 +3,7 @@
 """
     Desc    : 说明
     Author  : Lu Li (李露)
-    File    : main_remote.py.py
+    File    : new_service.py
     Date    : 2023/11/16 16:12
     Site    : https://gitee.com/voishion
     Project : gt-python-aigc-service
@@ -17,38 +17,52 @@ from langchain.agents import initialize_agent
 from langchain.agents import load_tools
 from loguru import logger
 
-from ChatGLM3Remote import ChatGLM3Remote
+from chatglm3.langchain.ChatGLM3Remote import ChatGLM3Remote
+from chatglm3.langchain.tool.News import News
+from common.singleton import singleton
 from config import settings
-from tool.News import News
-from tool.Weather import Weather
 
 
-def run_tool(tools, llm, prompt_chain: List[str]) -> dict:
-    loaded_tolls = []
-    for tool in tools:
-        if isinstance(tool, str):
-            loaded_tolls.append(load_tools([tool], llm=llm)[0])
-        else:
-            loaded_tolls.append(tool)
-    agent = initialize_agent(
-        loaded_tolls, llm,
-        agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
-        verbose=True,
-        handle_parsing_errors=True
-    )
+@singleton
+class NewService(object):
+    """
+    新闻服务
+    """
 
-    result = {}
-    for prompt in prompt_chain:
-        value = agent.run(prompt)
-        result[prompt] = value
+    def __init__(self):
+        super().__init__()
 
-    return result
+    def __run_tool(self, tools, llm, prompt_chain: List[str]) -> dict:
+        loaded_tolls = []
+        for tool in tools:
+            if isinstance(tool, str):
+                loaded_tolls.append(load_tools([tool], llm=llm)[0])
+            else:
+                loaded_tolls.append(tool)
+        agent = initialize_agent(
+            loaded_tolls, llm,
+            agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
+            verbose=True,
+            handle_parsing_errors=True
+        )
+
+        return agent.run(prompt_chain[0])
+
+    def search(self, prompt):
+        content = ''
+        llm = ChatGLM3Remote()
+        llm.load_model(server_url=settings.CHATGLM3_SERVER_URL)
+        start_time = time.time()
+        try:
+            content = self.__run_tool([News()], llm, [prompt])
+        except:
+            logger.error(traceback.format_exc())
+        finally:
+            logger.debug(f'执行耗时：{time.time() - start_time:.2f} s\n')
+        return content
 
 
 if __name__ == "__main__":
-    llm = ChatGLM3Remote()
-    llm.load_model(server_url=settings.CHATGLM3_SERVER_URL)
-
     # arxiv: 单个工具调用示例 1
     # run_tool(["arxiv"], llm, [
     #     "帮我查询GLM-130B相关工作"
@@ -96,16 +110,8 @@ if __name__ == "__main__":
 
         begin_time = time.time()
         try:
-            # result = run_tool([Calculator(), "arxiv", Weather(), News()], llm, [query])
-            # result = run_tool(["arxiv", Weather(), News()], llm, [query])
-            # result = run_tool([Weather(), News()], llm, [query])
-            result = run_tool([News()], llm, [query])
-            # logger.info(f"result type:{type(result)}")
-            # logger.info(f"result value:{json.dumps(result, ensure_ascii=False)}")
-            time.sleep(0.4)
-            logger.info(f'Final Result>>>>>>>>')
-            time.sleep(0.1)
-            print(result.get(query))
+            search = NewService().search(query)
+            print(search)
         except:
             logger.error(traceback.format_exc())
         finally:

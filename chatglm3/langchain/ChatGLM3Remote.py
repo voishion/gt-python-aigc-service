@@ -15,7 +15,7 @@ import openai
 from langchain.llms.base import LLM
 from loguru import logger
 
-from utils import tool_config_from_file
+from chatglm3.langchain.utils import tool_config_from_file
 
 
 class ChatGLM3Remote(LLM):
