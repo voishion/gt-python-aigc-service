@@ -1,10 +1,13 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Created on : 2022/4/22 22:02
-@Author: binkuolo
-@Des: 异常处理
+    Desc    : 异常处理
+    Author  : Lu Li (李露)
+    File    : Exception.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """
-
 from fastapi import HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from typing import Union
@@ -119,7 +122,7 @@ async def unicorn_exception_handler(_: Request, exc: UnicornException):
     })
 
 
-async def http422_error_handler(_: Request, exc: Union[RequestValidationError, ValidationError],) -> JSONResponse:
+async def http422_error_handler(_: Request, exc: Union[RequestValidationError, ValidationError], ) -> JSONResponse:
     """
     参数校验错误处理
     :param _:

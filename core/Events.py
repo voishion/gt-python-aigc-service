@@ -1,8 +1,12 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Created on : 2022/4/22 22:02
-@Author: binkuolo
-@Des: fastapi事件监听
+    Desc    : FastAPI事件监听
+    Author  : Lu Li (李露)
+    File    : Events.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """
 from typing import Callable
 

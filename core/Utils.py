@@ -1,8 +1,12 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Created on : 2022/4/22 22:02
-@Author: binkuolo
-@Des: 工具函数
+    Desc    : 工具函数
+    Author  : Lu Li (李露)
+    File    : Utils.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """
 
 import hashlib

@@ -1,8 +1,12 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Created on : 2022/4/22 22:02
-@Author: binkuolo
-@Des: app运行时文件
+    Desc    : App运行时文件
+    Author  : Lu Li (李露)
+    File    : app.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """
 
 from fastapi import FastAPI, HTTPException

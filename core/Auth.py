@@ -1,8 +1,12 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Time : 2022/4/27 3:40 PM
-@Author: binkuolo
-@Des: JWT鉴权
+    Desc    : JWT鉴权
+    Author  : Lu Li (李露)
+    File    : Auth.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """
 from datetime import timedelta, datetime
 import jwt

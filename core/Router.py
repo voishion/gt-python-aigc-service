@@ -1,8 +1,12 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Time : 2022/4/23 11:43 AM
-@Author: binkuolo
-@Des: 路由聚合
+    Desc    : 路由聚合
+    Author  : Lu Li (李露)
+    File    : Router.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """
 from api.api import api_router
 from views.views import views_router

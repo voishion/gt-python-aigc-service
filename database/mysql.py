@@ -1,8 +1,12 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Time : 2022/4/24 10:15 AM
-@Author: binkuolo
-@Des: mysql数据库
+    Desc    : MySQL数据库配置
+    Author  : Lu Li (李露)
+    File    : mysql.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """
 
 from fastapi import FastAPI

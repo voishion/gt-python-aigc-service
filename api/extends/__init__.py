@@ -1,6 +1,10 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Time : 2022/6/9 10:16 AM
-@Author: binkuolo
-@Des: 第三方扩展
+    Desc    : 包
+    Author  : Lu Li (李露)
+    File    : __init__.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """

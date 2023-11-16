@@ -1,8 +1,12 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Time : 2022/4/23 8:33 PM
-@Author: binkuolo
-@Des: views home
+    Desc    : 首页视图
+    Author  : Lu Li (李露)
+    File    : index.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """
 from fastapi import Request, APIRouter
 from fastapi.responses import HTMLResponse

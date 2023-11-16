@@ -1,8 +1,12 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Created on : 2022/4/22 22:02
-@Author: binkuolo
-@Des: 基本配置文件
+    Desc    : 基本配置文件
+    Author  : Lu Li (李露)
+    File    : config.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """
 import logging
 import os

@@ -1,8 +1,12 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Time : 2022/4/24 10:40 AM
-@Author: binkuolo
-@Des: 基础模型
+    Desc    : 基础模型
+    Author  : Lu Li (李露)
+    File    : base.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """
 
 

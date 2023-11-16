@@ -1,8 +1,12 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Time : 2022/4/25 2:09 PM
-@Author: binkuolo
-@Des: redis
+    Desc    : Redis数据库配置
+    Author  : Lu Li (李露)
+    File    : redis.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """
 
 import aioredis

@@ -1,8 +1,12 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Time : 2022/5/4 10:54 PM
-@Author: binkuolo
-@Des: 基础schemas
+    Desc    : 基础schemas
+    Author  : Lu Li (李露)
+    File    : base.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """
 from pydantic import BaseModel, Field
 from typing import List
