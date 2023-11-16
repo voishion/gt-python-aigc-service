@@ -1,15 +1,19 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Time : 2022/5/18 1:03 AM
-@Author: binkuolo
-@Des: 权限管理
+    Desc    : 会议处理
+    Author  : Lu Li (李露)
+    File    : meeting.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """
 
 from fastapi import Request, APIRouter, Security
 
 from common.enums import Scopes
 from core.Auth import check_permissions
-from core.Response import fail, success
+from core.Response import success
 from schemas import meeting
 
 router = APIRouter(prefix='')

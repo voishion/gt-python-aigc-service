@@ -1,11 +1,14 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-@Time : 2022/5/5 1:30 AM
-@Author: binkuolo
-@Des: 测试
+    Desc    : 测试
+    Author  : Lu Li (李露)
+    File    : helper.py
+    Date    : 2023/11/16 14:48
+    Site    : https://gitee.com/voishion
+    Project : gt-python-aigc-service
 """
 from fastapi import Depends, HTTPException
-from fastapi import Request
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 
 from common.enums import Scopes
@@ -27,18 +30,4 @@ async def test_oath2(data: OAuth2PasswordRequestForm = Depends()):
     }
     jwt_token = create_access_token(data=jwt_data)
 
-    return {"access_token": jwt_token, "token_type": "bearer"}
-
-
-async def apply_temp_token(request: Request):
-    """
-    apply_temp_token
-    :param request:
-    :return:
-    """
-    jwt_data = {
-        "user_id": Utils.random_uuid(),
-        "user_type": '1'
-    }
-    jwt_token = create_access_token(data=jwt_data)
     return {"access_token": jwt_token, "token_type": "bearer"}
