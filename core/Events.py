@@ -10,13 +10,11 @@
 """
 from typing import Callable
 
-from aioredis import Redis
 from fastapi import FastAPI
+from loguru import logger as log
 
 from config import settings
-from database.mysql import register_mysql
-from database.redis import sys_cache, code_cache
-from loguru import logger as log
+
 
 def startup(app: FastAPI) -> Callable:
     """

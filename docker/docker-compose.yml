@@ -1,0 +1,13 @@
+version : '3.8'
+services:
+  gt-python-aigc-service:
+    container_name: gt-python-aigc-service
+    build:
+      context: ..
+      dockerfile: ../Dockerfile
+#    security_opt:
+#      - seccomp:unconfined
+#    environment:
+#      APP_INFO: '测试信息=============='
+    ports:
+      - "9000:9000"
