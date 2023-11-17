@@ -3,7 +3,7 @@
 docker logout
 docker login 10.152.160.83:60919
 
-latest_ver=$(date +%y%m%d)
+latest_ver=0.0.1
 images_name=10.152.160.83:60919/gt-base/python:3.10-slim-bullseye-gt
 
 echo "images info:$images_name"
