@@ -25,7 +25,7 @@ router = APIRouter(prefix='')
     response_model=meeting.MeetingSummaryResp,
     summary="会议总结",
     description="通过人工智能实现文字会议纪要的总结",
-    dependencies=[Security(check_permissions, scopes=[Scopes.ACCESS_API.value])]
+    # dependencies=[Security(check_permissions, scopes=[Scopes.ACCESS_API.value])]
 )
 async def summary(post: meeting.MeetingSummaryReq):
     result = MeetingService().meeting_summary(post.content)
