@@ -1,0 +1,17 @@
+fastapi[all]~=0.104.1
+tortoise-orm[aiomysql]
+aioredis~=2.0.1
+uvicorn
+PyJWT~=2.8.0
+passlib~=1.7.4
+openai==0.28
+loguru~=0.7.2
+tortoise~=0.1.1
+starlette~=0.27.0
+pydantic~=2.5.0
+python-dotenv~=1.0.0
+
+langchain~=0.0.336
+arxiv
+requests~=2.31.0
+pyyaml~=6.0.1

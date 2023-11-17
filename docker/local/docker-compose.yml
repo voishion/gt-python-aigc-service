@@ -3,7 +3,7 @@ services:
   gt-python-aigc-service:
     container_name: gt-python-aigc-service
     build:
-      context: ..
+      context: ../..
       dockerfile: ../Dockerfile
 #    security_opt:
 #      - seccomp:unconfined
