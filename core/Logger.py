@@ -27,7 +27,7 @@ import logging
 from types import FrameType
 from typing import cast
 from loguru import logger
-
+from contextvars import ContextVar
 from config import settings
 
 __all__ = ["log", "Loggers"]
@@ -37,11 +37,58 @@ EXCLUDE_LOG_NAME = {
     'uvicorn.protocols.http.httptools_impl'
 }
 
+# 全链路日志追踪
+_x_trace_request_id: ContextVar[str] = ContextVar('x_trace_request_id', default="-")  # 请求ID
+_x_trace_task_id: ContextVar[str] = ContextVar('x_trace_task_id', default="-")  # 任务ID
+
+
+class TraceID:
+    """全链路追踪ID"""
+
+    @staticmethod
+    def set_req_id(req_id: str):
+        """
+        设置全链路追踪请求ID
+        :param req_id: 请求ID
+        :return: None
+        """
+        _x_trace_request_id.set(req_id)
+
+    @staticmethod
+    def get_req_id() -> str:
+        """
+        获取全链路追踪请求ID
+        :return: 请求ID
+        """
+        return _x_trace_request_id.get()
+
+    @staticmethod
+    def set_task_id(task_id: str, task_name: str = "task"):
+        """
+        设置全链路追踪任务ID，例如:TraceID.set_task_id('A', 'into_summary_sse')
+        :param task_id: 任务ID
+        :param task_name: 任务名称
+        :return: None
+        """
+        _x_trace_task_id.set('{}:{}'.format(task_id, task_name))
+
+    @staticmethod
+    def get_task_id():
+        """
+        获取全链路追踪任务ID
+        :return: 任务ID
+        """
+        return _x_trace_task_id.get()
+
 
 class Logger:
     """输出日志到文件和控制台"""
 
     def __filter(self, record):
+        record['extra'] = {
+            "trace_request_id": TraceID.get_req_id(),
+            "trace_task_id": TraceID.get_task_id()
+        }
         return record["name"] not in EXCLUDE_LOG_NAME
 
     def __init__(self):
@@ -57,20 +104,24 @@ class Logger:
         # 日志输出格式
         # 添加控制台输出的格式,sys.stdout为输出到屏幕;关于这些配置还需要自定义请移步官网查看相关参数说明
         self.logger.add(sys.stdout,
-                        format="<green>{time:YYYY-MM-DD HH:mm:ss.ms}</green> | "
+                        format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | "
                                "<level>{level:<8}</level> | "
                                "<yellow>{process:<5}</yellow> | "
                                "<magenta>{thread:<15}</magenta> | "
+                               "<red>[{extra[trace_request_id]}]</red> | "
+                               "<red>[{extra[trace_task_id]}]</red> | "
                                "<cyan>{name}:{function}</cyan>:<cyan><level>{line}</level></cyan> - "
                                "<level>{message}</level>",
                         filter=self.__filter,
                         level=settings.LOG_LEVEL)
         # 日志写入文件
         self.logger.add(log_path,
-                        format='{time:YYYY-MM-DD HH:mm:ss.ms} | '
+                        format='{time:YYYY-MM-DD HH:mm:ss.SSS} | '
                                "{level:<8} | "
                                "{process} | "
                                "{thread} | "
+                               "[{extra[trace_request_id]}] | "
+                               "[{extra[trace_task_id]}] | "
                                '{name}:{function}:{line} - {message}',
                         encoding='utf-8',
                         retention='7 days',  # 设置历史保留时长
