@@ -13,7 +13,7 @@ from datetime import datetime
 
 import openai
 from fastapi import Request
-from loguru import logger as log
+from core.Logger import log
 
 from common.const import DATE_FORMAT, TIME_FORMAT, CHATGLM3_6B
 from common.singleton import singleton

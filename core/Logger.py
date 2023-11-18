@@ -46,7 +46,7 @@ class Logger:
 
     def __init__(self):
         # 文件的命名
-        log_name = f"Fast_{time.strftime('%Y-%m-%d', time.localtime()).replace('-', '_')}.log"
+        log_name = f"{settings.PROJECT_NAME}_{time.strftime('%Y-%m-%d', time.localtime()).replace('-', '_')}.log"
         log_path = os.path.join(settings.LOG_PATH, log_name)
         self.logger = logger
         # 清空所有设置
@@ -78,7 +78,6 @@ class Logger:
                         diagnose=True,  # 诊断
                         enqueue=True,  # 异步写入
                         rotation="00:00",  # 每日更新时间
-                        # filter="my_module",  # 过滤模块
                         compression="zip",  # 文件压缩
                         level=settings.LOG_LEVEL)
 
