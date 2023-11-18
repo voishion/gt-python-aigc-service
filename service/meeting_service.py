@@ -12,12 +12,12 @@ import time
 from datetime import datetime
 
 import openai
+from fastapi import Request
+from loguru import logger as log
 
 from common.const import DATE_FORMAT, TIME_FORMAT, CHATGLM3_6B
 from common.singleton import singleton
 from config import settings
-
-from loguru import logger as log
 
 
 @singleton
@@ -54,9 +54,10 @@ class MeetingService(object):
         )
         return response
 
-    def meeting_summary(self, content: str) -> str:
+    def meeting_summary(self, req: Request, content: str) -> str:
         """
         会议总结处理
+        :param req: 请求对象
         :param content: 会议内容
         :return: 会议总结
         """
@@ -65,13 +66,15 @@ class MeetingService(object):
             {"role": "user", "content": self.__get_user_prompt(content)}
         ]
         start_time = time.time()
-        response = self.__get_model_response(messages, stream=False)
+        future = req.app.state.openai_thread_pool.submit(self.__get_model_response, messages=messages, stream=False)
+        response = future.result()  # 阻塞直到结果返回
         log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
         return response['choices'][0]['message']['content']
 
-    def meeting_summary_sse(self, content: str):
+    def meeting_summary_sse(self, req: Request, content: str):
         """
         会议总结处理，SSE
+        :param req: 请求对象
         :param content: 会议内容
         :return: 会议总结推送生成器
         """
@@ -82,7 +85,9 @@ class MeetingService(object):
             {"role": "user", "content": self.__get_user_prompt(content)}
         ]
         start_time = time.time()
-        response = self.__get_model_response(messages)
+        # 使用线程池执行API请求
+        future = req.app.state.openai_thread_pool.submit(self.__get_model_response, messages=messages)
+        response = future.result()  # 阻塞直到结果返回
         log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
         for chunk in response:
             delta = chunk.choices[0].delta

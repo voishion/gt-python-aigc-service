@@ -9,7 +9,7 @@
     Project : gt-python-aigc-service
 """
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Request
 from fastapi.responses import StreamingResponse
 
 from core.Response import success
@@ -25,8 +25,8 @@ router = APIRouter(prefix='')
     description="通过人工智能实现文字会议纪要的总结",
     response_model=meeting.MeetingSummaryResp,
 )
-async def summary(post: meeting.MeetingSummaryReq):
-    result = MeetingService().meeting_summary(post.content)
+async def summary(req: Request, post: meeting.MeetingSummaryReq):
+    result = MeetingService().meeting_summary(req, post.content)
     return success(msg="会议总结完成", data=result)
 
 
@@ -35,6 +35,6 @@ async def summary(post: meeting.MeetingSummaryReq):
     summary="会议总结 SSE",
     description="通过人工智能实现文字会议纪要的总结 (SSE)",
 )
-async def summary_sse(content: str = Query(default="你是谁？", min_length=1, description="会议内容")):
-    generator = MeetingService().meeting_summary_sse(content)
+async def summary_sse(req: Request, content: str = Query(default="你是谁？", min_length=1, description="会议内容")):
+    generator = MeetingService().meeting_summary_sse(req, content)
     return StreamingResponse(generator, media_type="text/event-stream")

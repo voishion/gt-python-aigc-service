@@ -14,6 +14,7 @@ from fastapi import FastAPI
 from loguru import logger as log
 
 from config import settings
+from core.Exts import openaiThreadPool
 
 
 def startup(app: FastAPI) -> Callable:
@@ -31,6 +32,7 @@ def startup(app: FastAPI) -> Callable:
         # 注入缓存到app state
         # app.state.cache = await sys_cache()
         # app.state.code_cache = await code_cache()
+        app.state.openai_thread_pool = await openaiThreadPool()
 
         pass
 
@@ -51,5 +53,7 @@ def stopping(app: FastAPI) -> Callable:
         # code: Redis = await app.state.code_cache
         # await cache.close()
         # await code.close()
+        openai_thread_pool = app.state.openaiThreadPool
+        openai_thread_pool.shutdown()
 
     return stop_app
