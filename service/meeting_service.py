@@ -31,34 +31,43 @@ class MeetingService(object):
     def __init__(self):
         super().__init__()
 
+    def __get_system_prompt(self) -> str:
+        return (
+            ('You are Smart Xiaotong, the large-model artificial intelligence assistant of General Technology Group. '
+             'Today is {}, and the current time is {}, Answer the following questions as best as you can. You have '
+             'access to the following tools:')
+            .format(datetime.now().strftime(DATE_FORMAT),
+                    datetime.now().strftime(TIME_FORMAT)))
+
+    def __get_user_prompt(self, content: str) -> str:
+        return ('请将以下文本总结成会议纪要，重点在于会议核心思想以及会议内容，文本中包含说话人姓名和发言时间范围，请使用中文回复，'
+                '文本内容如下：\n\n{}').format(content)
+
+    def __get_model_response(self, messages, stream=True):
+        response = openai.ChatCompletion.create(
+            model=CHATGLM3_6B,
+            messages=messages,
+            max_tokens=2048,
+            temperature=0.75,
+            top_p=1,
+            stream=stream
+        )
+        return response
+
     def meeting_summary(self, content: str) -> str:
         """
         会议总结处理
         :param content: 会议内容
         :return: 会议总结
         """
-        content = ('请将以下文本内容转换为会议纪要，需要总结会议核心思想与会后的工作内容，文本内容中包含说话人名字和说话起始范围，'
-                   '文本内容如下：\n{}').format(content)
+        messages = [
+            {"role": "system", "content": self.__get_system_prompt()},
+            {"role": "user", "content": self.__get_user_prompt(content)}
+        ]
         start_time = time.time()
-        response = openai.ChatCompletion.create(
-            model=CHATGLM3_6B,
-            messages=[
-                {"role": "system",
-                 "content": f"You are Smart Xiaotong, the large-model artificial intelligence assistant of General "
-                            f"Technology Group. Today is {datetime.now().strftime(DATE_FORMAT)}, and the current "
-                            f"time is {datetime.now().strftime(TIME_FORMAT)}, Answer the following questions as best "
-                            f"as you can. You have access to the following tools:"},
-                {"role": "user", "content": content}
-            ],
-            max_tokens=2048,
-            temperature=0.75,
-            top_p=1
-            # stream=True
-        )
-        response_time = time.time()
-        result = response['choices'][0]['message']['content']
-        log.debug(f'请求耗时：{response_time - start_time:.2f} s, result：{result}')
-        return result
+        response = self.__get_model_response(messages, stream=False)
+        log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
+        return response['choices'][0]['message']['content']
 
     def meeting_summary_sse(self, content: str):
         """
@@ -68,26 +77,19 @@ class MeetingService(object):
         """
         yield "data:Initializing...\n\n"
 
-        response = openai.ChatCompletion.create(
-            model="chatglm3",
-            messages=[
-                {"role": "system",
-                 "content": f"You are Smart Xiaotong, the large-model artificial intelligence assistant of General "
-                            f"Technology Group. Today is {datetime.now().strftime(DATE_FORMAT)}, and the current "
-                            f"time is {datetime.now().strftime(TIME_FORMAT)}, Answer the following questions as best "
-                            f"as you can. You have access to the following tools:"},
-                {"role": "user", "content": content}
-            ],
-            max_tokens=2048,
-            temperature=0.75,
-            stream=True
-        )
-        for new_response in response:
-            delta = new_response.choices[0].delta
+        messages = [
+            {"role": "system", "content": self.__get_system_prompt()},
+            {"role": "user", "content": self.__get_user_prompt(content)}
+        ]
+        start_time = time.time()
+        response = self.__get_model_response(messages)
+        log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
+        for chunk in response:
+            delta = chunk.choices[0].delta
             if "content" in delta:
-                msg = delta['content']
-                if msg:
-                    yield "data:{}\n\n".format(msg)
+                _content = delta['content']
+                if _content:
+                    yield "data:{}\n\n".format(_content)
                     time.sleep(0.5)
 
         yield "data:Completed\n\n"
