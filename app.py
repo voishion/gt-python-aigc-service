@@ -12,14 +12,16 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.sessions import SessionMiddleware
-from config import settings
-from fastapi.staticfiles import StaticFiles
-from core import Exception, Events, Router, Middleware
-from fastapi.templating import Jinja2Templates
-from tortoise.exceptions import OperationalError, DoesNotExist, IntegrityError, ValidationError
 from fastapi.openapi.docs import (get_redoc_html, get_swagger_ui_html, get_swagger_ui_oauth2_redirect_html)
 from fastapi.openapi.utils import get_openapi
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from starlette.middleware.sessions import SessionMiddleware
+from tortoise.exceptions import OperationalError, DoesNotExist, IntegrityError, ValidationError
+
+from config import settings
+from core import Exception, Events, Router, Middleware
+from core.Logger import Loggers
 
 application = FastAPI(
     debug=settings.APP_DEBUG,
@@ -114,5 +116,8 @@ application.include_router(Router.router)
 # 静态资源目录
 application.mount('/static', StaticFiles(directory=settings.STATIC_DIR), name="static")
 application.state.views = Jinja2Templates(directory=settings.TEMPLATE_DIR)
+
+# loguru接管uvicorn日志
+Loggers.init_config()
 
 app = application

@@ -8,11 +8,10 @@
     Site    : https://gitee.com/voishion
     Project : gt-python-aigc-service
 """
-import logging
 import os
-from dotenv import load_dotenv, find_dotenv
 from typing import List
 
+from dotenv import load_dotenv, find_dotenv
 from pydantic_settings import BaseSettings
 
 
@@ -20,7 +19,9 @@ class Config(BaseSettings):
     # 加载环境变量
     load_dotenv(find_dotenv(), override=True)
     # 日志打印级别
-    LOG_LEVEL: int = logging.INFO
+    LOG_PATH: str = "logs"
+    # 日志打印级别，DEBUG、INFO、WARNING、ERROR、CRITICAL
+    LOG_LEVEL: str = "DEBUG"
     # 调试模式
     APP_DEBUG: bool = True
     # 项目信息

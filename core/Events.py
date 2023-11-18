@@ -11,10 +11,10 @@
 from typing import Callable
 
 from fastapi import FastAPI
-from loguru import logger as log
 
 from config import settings
 from core.Exts import openaiThreadPool
+from core.Logger import log
 
 
 def startup(app: FastAPI) -> Callable:
