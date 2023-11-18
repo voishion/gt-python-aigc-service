@@ -110,6 +110,25 @@ application.add_middleware(
     max_age=settings.SESSION_MAX_AGE
 )
 
+
+# @application.middleware("http")
+# async def request_trace_id_middleware(request: Request, call_next):
+#     trace_id = str(uuid.uuid4())
+#     with logger.contextualize(trace_id=trace_id):
+#         try:
+#             logger.info("Request started")
+#             return await call_next(request)
+#         except Exception as exc:
+#             logger.error(f"Request failed: {exc}")
+#             return JSONResponse({
+#                 "code": -1,
+#                 "message": exc.__str__(),
+#                 "data": []
+#             }, status_code=500)
+#         finally:
+#             logger.info("Request ended")
+
+
 # 路由
 application.include_router(Router.router)
 

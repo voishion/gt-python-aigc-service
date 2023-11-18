@@ -53,7 +53,5 @@ def stopping(app: FastAPI) -> Callable:
         # code: Redis = await app.state.code_cache
         # await cache.close()
         # await code.close()
-        openai_thread_pool = app.state.openaiThreadPool
-        openai_thread_pool.shutdown()
 
     return stop_app
