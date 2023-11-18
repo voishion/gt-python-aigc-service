@@ -5,4 +5,4 @@ RUN chmod +x ${BUILD_PREFIX}/docker/entrypoint.sh
 
 USER noroot
 
-ENTRYPOINT ["/app/docker/entrypoint.sh"]
+ENTRYPOINT ["/bin/sh", "-c", "${BUILD_PREFIX}/docker/entrypoint.sh"]
