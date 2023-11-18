@@ -116,7 +116,7 @@ application.add_middleware(
 @application.middleware("http")
 async def request_trace_id_middleware(request: Request, call_next):
     try:
-        log.debug("Request started")
+        # log.debug("Request started")
         REQUEST_ID_KEY = "X-Request-Id"
         req_id = request.headers.get(REQUEST_ID_KEY, '')
         if not req_id:
@@ -136,7 +136,8 @@ async def request_trace_id_middleware(request: Request, call_next):
             "data": []
         }, status_code=500)
     finally:
-        log.debug("Request ended")
+        # log.debug("Request ended")
+        pass
 
 
 # 路由
