@@ -59,3 +59,31 @@ class MeetingService(object):
         result = response['choices'][0]['message']['content']
         log.debug(f'请求耗时：{response_time - start_time:.2f} s, result：{result}')
         return result
+
+    def meeting_summary_sse(self, content: str):
+        yield "data:Initializing...\n\n"
+
+        response = openai.ChatCompletion.create(
+            model="chatglm3",
+            messages=[
+                {"role": "system",
+                 "content": f"You are Smart Xiaotong, the large-model artificial intelligence assistant of General "
+                            f"Technology Group. Today is {datetime.now().strftime(DATE_FORMAT)}, and the current "
+                            f"time is {datetime.now().strftime(TIME_FORMAT)}, Answer the following questions as best "
+                            f"as you can. You have access to the following tools:"},
+                {"role": "user", "content": content}
+            ],
+            max_tokens=2048,
+            temperature=0.75,
+            stream=True
+        )
+        for new_response in response:
+            delta = new_response.choices[0].delta
+            if "content" in delta:
+                msg = delta['content']
+                if msg:
+                    yield "data:{}\n\n".format(msg)
+                    time.sleep(0.5)
+
+        yield "data:Completed\n\n"
+        yield "event:end\nid:stop\ndata:END\n\n"
