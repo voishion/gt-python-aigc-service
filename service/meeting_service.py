@@ -61,6 +61,11 @@ class MeetingService(object):
         return result
 
     def meeting_summary_sse(self, content: str):
+        """
+        会议总结处理，SSE
+        :param content: 会议内容
+        :return: 会议总结推送生成器
+        """
         yield "data:Initializing...\n\n"
 
         response = openai.ChatCompletion.create(
