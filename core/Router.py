@@ -9,13 +9,14 @@
     Project : gt-python-aigc-service
 """
 from api.api import api_router
+from actuator.api import actuator_router
 from views.views import views_router
 from fastapi import APIRouter
-
 
 router = APIRouter()
 # 视图路由
 router.include_router(views_router)
+# 探针路由
+router.include_router(actuator_router)
 # API路由
 router.include_router(api_router)
-
