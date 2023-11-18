@@ -1,12 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="basic basic_index" lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
-    <link rel="shortcut icon" href="https://fastapi.tiangolo.com/img/favicon.png">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0,minimum-scale=1,maximum=scale=1">
+    <title>智慧通用-{{ title }}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', path='/favicon.ico') }}" type="image/x-icon">
+    <meta name="theme-color" content="#00C66B"/>
+    <link href="{{ url_for('static', path='/css/css-PlayfairDisplay.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', path='/css/css-Poppins400600.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', path='/css/basic-1765b545.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', path='/css/font_954744_g42joo6uzdr.css') }}" rel="stylesheet">
 </head>
 <body>
-<h3><a href="/docs" target="_blank">Swagger</a></h3>
-<h3><a href="/redoc" target="_blank">Redoc</a></h3>
+<main>
+    <section id="hero" class="hero">
+        <div class="hero-content">
+            <div class="hero-banner">
+                <h4>
+                    <div class="jz ys">{{ title }}</div>
+                </h4>
+                <br>
+                <div class="landing-buttons">
+                    <a class="landing-button" target="_blank" href="/docs">Swagger</a>
+                    <a class="landing-button" target="_blank" href="/redoc">Redoc</a>
+                </div>
+            </div>
+            <div class="hero-footer">
+                <div class="-counter">
+                    <p><small>Survival Time </small></p>
+                    <div id="sitetime" class="time"></div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</main>
+<script src="{{ url_for('static', path='/js/jquery-59e367f0.js') }}"></script>
+<script src="{{ url_for('static', path='/js/threejs-6ebcc050.js') }}"></script>
+<script src="{{ url_for('static', path='/js/projector-2f448d36.js') }}"></script>
+<script src="{{ url_for('static', path='/js/canvasrenderer-0792e9f3.js') }}"></script>
+<script src="{{ url_for('static', path='/js/feather-cae18e22.js') }}"></script>
+<script src="{{ url_for('static', path='/js/imagesloaded-566550fd.js') }}"></script>
+<script src="{{ url_for('static', path='/js/jquery-countdown-38fb1392.js') }}"></script>
+<script src="{{ url_for('static', path='/js/jquery-scrollto-94f5d0cb.js') }}"></script>
+<script src="{{ url_for('static', path='/js/jquery-localscroll-640631e1.js') }}"></script>
+<script src="{{ url_for('static', path='/js/packery-8c62b54b.js') }}"></script>
+<script src="{{ url_for('static', path='/js/magnific-popup-c9f972e2.js') }}"></script>
+<script src="{{ url_for('static', path='/js/slick-carousel-3b41b3bc.js') }}"></script>
+<script src="{{ url_for('static', path='/js/sphere-dark-16cf345f.js') }}"></script>
+<script src="{{ url_for('static', path='/js/main-d441790e.js') }}"></script>
+<script src="{{ url_for('static', path='/js/basic-9ff86e20.js') }}"></script>
+<script src="{{ url_for('static', path='/js/wikisj.js') }}"></script>
 </body>
 </html>
