@@ -68,6 +68,7 @@
     function start_sse() {
         if ('EventSource' in window) {
             sse_source = new EventSource(root_url + 'api/v1/meeting/summary-sse?content=%E4%BD%A0%E6%98%AF%E8%B0%81%EF%BC%9F', {withCredentials: true});
+
             sse_source.onopen = function (event) {
                 console.log('open', event)
             };
@@ -78,20 +79,25 @@
                 // 在此处添加自定义的错误处理逻辑，如果需要的话
                 stop_sse();
             };
+
             // 自定义事件初始化
             sse_source.addEventListener('initializing', function (event) {
-                console.log('initializing', event)
+                // console.log('initializing', event)
+                console.log('initializing data:', event.data)
             }, false);
             sse_source.addEventListener('message', function (event) {
-                console.log('message', event)
+                // console.log('message', event)
+                console.log('message data:', event.data)
             }, false);
             // 自定义事件处理完成
             sse_source.addEventListener('completed', function (event) {
-                console.log('completed', event)
+                // console.log('completed', event)
+                console.log('completed data:', event.data)
             }, false);
-            // 自定义事件停止
-            sse_source.addEventListener('stop', function (event) {
-                console.log('stop', event)
+            // 自定义事件结束
+            sse_source.addEventListener('end', function (event) {
+                // console.log('end', event)
+                console.log('end data:', event.data)
                 stop_sse();
             }, false);
         }

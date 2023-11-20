@@ -102,4 +102,4 @@ class MeetingService(object):
                     time.sleep(0.5)
 
         yield "event:completed\ndata:Completed\n\n"
-        yield "event:end\ndata:END\n\n"
+        yield "event:end\ndata:End\n\n"
