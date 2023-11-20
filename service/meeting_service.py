@@ -66,8 +66,7 @@ class MeetingService(object):
             {"role": "user", "content": self.__get_user_prompt(content)}
         ]
         start_time = time.time()
-        future = req.app.state.openai_thread_pool.submit(self.__get_model_response, messages=messages, stream=False)
-        response = future.result()  # 阻塞直到结果返回
+        response = self.__get_model_response(messages=messages, stream=False)
         log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
         return response['choices'][0]['message']['content']
 
@@ -86,8 +85,7 @@ class MeetingService(object):
         ]
         start_time = time.time()
         # 使用线程池执行API请求
-        future = req.app.state.openai_thread_pool.submit(self.__get_model_response, messages=messages)
-        response = future.result()  # 阻塞直到结果返回
+        response = self.__get_model_response(messages=messages)
         log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
         for chunk in response:
             delta = chunk.choices[0].delta
@@ -95,7 +93,7 @@ class MeetingService(object):
                 _content = delta['content']
                 if _content:
                     yield "data:{}\n\n".format(_content)
-                    time.sleep(0.5)
+                    # time.sleep(0.5)
 
         yield "data:Completed\n\n"
         yield "event:end\nid:stop\ndata:END\n\n"
