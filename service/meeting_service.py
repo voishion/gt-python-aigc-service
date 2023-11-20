@@ -13,6 +13,8 @@ from datetime import datetime
 
 import openai
 from fastapi import Request
+
+from core import Utils
 from core.Logger import log
 
 from common.const import DATE_FORMAT, TIME_FORMAT, CHATGLM3_6B
@@ -53,9 +55,10 @@ class MeetingService(object):
             "max_tokens": 2048,
             "temperature": 0.75,
             "top_p": 1,
-            "stream": stream
+            "stream": stream,
+            "headers": headers
         }
-        return openai.ChatCompletion.create(**params, headers=headers)
+        return openai.ChatCompletion.create(**params)
 
     def meeting_summary(self, req: Request, content: str) -> str:
         """
@@ -80,7 +83,7 @@ class MeetingService(object):
         :param content: 会议内容
         :return: 会议总结推送生成器
         """
-        yield "data:\n\n"
+        yield "data:\neventTime:{}\n\n".format(Utils.current_time_millis())
 
         messages = [
             {"role": "system", "content": self.__get_system_prompt()},
@@ -95,8 +98,8 @@ class MeetingService(object):
             if "content" in delta:
                 _content = delta['content']
                 if _content:
-                    yield "data:{}\n\n".format(_content)
+                    yield "data:{}\neventTime:{}\n\n".format(_content, Utils.current_time_millis())
                     time.sleep(0.5)
 
         yield "data:\n\n"
-        yield "event:end\nid:stop\ndata:END\n\n"
+        yield "event:end\nid:stop\ndata:END\neventTime:{}\n\n".format(Utils.current_time_millis())

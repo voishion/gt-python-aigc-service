@@ -67,3 +67,12 @@ def code_number(ln: int):
         code += ch
 
     return code
+
+
+def current_time_millis() -> int:
+    """
+    获取当前时间戳
+    :return:
+    """
+    import time
+    return int(time.time() * 1000)
