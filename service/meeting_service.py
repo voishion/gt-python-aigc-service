@@ -45,7 +45,8 @@ class MeetingService(object):
 
     def __get_model_response(self, req: Request, messages, stream=True):
         headers = {
-            "Authorization": "MTAuNDIuNC4w%7CMGE3YmJhZjg4NThiOTVjNTcyMDNjMDg5YmYxYmFjZWJmYWFmNTVkMTA4YzdjNzc3OTRlMDUxZjE2ODY1ZjNiNg%3D%3D%7CpOXzn%2BC1SkAjYrLYDzuCadfIloY%3D",
+            # "Authorization": "MTAuNDIuNC4w%7CMGE3YmJhZjg4NThiOTVjNTcyMDNjMDg5YmYxYmFjZWJmYWFmNTVkMTA4YzdjNzc3OTRlMDUxZjE2ODY1ZjNiNg%3D%3D%7CpOXzn%2BC1SkAjYrLYDzuCadfIloY%3D",
+            "Authorization": "zhaosi",
         }
         params = {
             "model": CHATGLM3_6B,
@@ -70,9 +71,15 @@ class MeetingService(object):
             {"role": "user", "content": self.__get_user_prompt(content)}
         ]
         start_time = time.time()
-        response = self.__get_model_response(req=req, messages=messages, stream=False)
-        log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
-        return response['choices'][0]['message']['content']
+        try:
+            response = self.__get_model_response(req=req, messages=messages, stream=False)
+            result = response['choices'][0]['message']['content']
+        except Exception as e:
+            log.exception("发生异常：%s", str(e))
+            result = self.__get_exp_msg(e)
+        finally:
+            log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
+        return result
 
     def meeting_summary_sse(self, req: Request, content: str):
         """
@@ -99,7 +106,6 @@ class MeetingService(object):
                     if _content:
                         yield "data:{}\n\n".format(_content)
                         time.sleep(0.5)
-
         except Exception as e:
             log.exception("发生异常：%s", str(e))
             yield "data:{}\n\n".format(self.__get_exp_msg(e))
