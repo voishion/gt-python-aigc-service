@@ -21,8 +21,10 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import JSONResponse
 from tortoise.exceptions import OperationalError, DoesNotExist, IntegrityError, ValidationError
 
+from common.const import IDP_SESSION, DEFAULT_IDP_SESSION, REQUEST_ID_KEY, TASK_ID_KEY
 from config import settings
 from core import Exception, Events, Router, Middleware
+from core.IdpSession import IdpSession
 from core.Logger import Loggers, log, TraceID
 
 application = FastAPI(
@@ -117,15 +119,18 @@ application.add_middleware(
 async def request_trace_id_middleware(request: Request, call_next):
     try:
         # log.debug("Request started")
-        REQUEST_ID_KEY = "X-Request-Id"
+
+        idp_session = request.cookies[IDP_SESSION] if IDP_SESSION in request.cookies else DEFAULT_IDP_SESSION
+        IdpSession.set_idp_session(idp_session)
+
         req_id = request.headers.get(REQUEST_ID_KEY, '')
         if not req_id:
             req_id = str(uuid.uuid4())
-
         TraceID.set_req_id(req_id)
+
         response = await call_next(request)
+
         response.headers[REQUEST_ID_KEY] = TraceID.get_req_id()
-        TASK_ID_KEY = "X-Task-Id"
         response.headers[TASK_ID_KEY] = TraceID.get_task_id()
         return response
     except Exception as exc:

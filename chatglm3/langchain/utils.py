@@ -12,7 +12,7 @@ import os
 import yaml
 
 
-def tool_config_from_file(tool_name, directory="tool/"):
+def tool_config_from_file(tool_name, directory="chatglm3/langchain/tool/"):
     """search tool yaml and return json format"""
     for filename in os.listdir(directory):
         if filename.endswith('.yaml') and tool_name in filename:

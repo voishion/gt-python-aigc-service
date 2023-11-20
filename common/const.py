@@ -19,3 +19,6 @@ SSE_RETRY = 15000
 
 IDP_SESSION = "_idp_session"
 DEFAULT_IDP_SESSION = settings.PROJECT_NAME
+
+TASK_ID_KEY = "X-Task-Id"
+REQUEST_ID_KEY = "X-Request-Id"

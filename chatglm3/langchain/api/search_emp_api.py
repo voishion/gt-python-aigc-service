@@ -13,12 +13,8 @@ import time
 import traceback
 
 import requests
-from loguru import logger
 
-headers = {
-    "Content-Type": "application/json",
-    "Cookie": "_idp_session=MTAuMTUyLjIuMTA1%7CZDk1NTFkMjNkNmZjOTVmNGJkYzM3ZTVkNTAwMDY5NzhhOTFlY2M1MjFmOWM1OTJhNzI5ODQ1NGVhOTRjNzhjNA%3D%3D%7CB2ebqRMC9xT4c204aXLAdOSEEhI%3D",
-}
+from core.IdpSession import IdpSession
 
 
 def search(keyword: str) -> dict:
@@ -68,6 +64,10 @@ def __api_call(opt_type: int, url, data):
     resp = None
     begin_time = time.time()  # type: float
     try:
+        headers = {
+            "Content-Type": "application/json",
+            "Cookie": "_idp_session={}".format(IdpSession.get_idp_session()),
+        }
         resp = requests.post(url, data=data, headers=headers)
         resp.raise_for_status()
         resp = resp.json()
@@ -75,7 +75,7 @@ def __api_call(opt_type: int, url, data):
         format_exc = traceback.format_exc()
         raise Exception(f"Failed to call {ens} interface, {format_exc}")
     finally:
-        # logger.debug(f'调用{cns}新闻接口\n'
+        # log.debug(f'调用{cns}新闻接口\n'
         #              f'请求信息:\nurl={url}\nheaders={json.dumps(headers)}\ndata={data}\n'
         #              f'响应信息:\n{json.dumps(resp)}\n'
         #              f'请求耗时:{(time.time() - begin_time):.2f} s')

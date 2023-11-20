@@ -13,7 +13,7 @@ from typing import List, Optional
 
 import openai
 from langchain.llms.base import LLM
-from loguru import logger
+from core.Logger import log
 
 from chatglm3.langchain.utils import tool_config_from_file
 
@@ -127,11 +127,11 @@ Action:
             "content": query
         })
 
-        logger.info(f">>>query:{type(query)}, json:{json.dumps(query, ensure_ascii=False)}")
-        logger.info(f">>>self.history:{type(self.history)}, json:\n{json.dumps(self.history, ensure_ascii=False)}")
-        # logger.info(f">>>self.do_sample:{self.do_sample}")
-        # logger.info(f">>>self.max_token:{self.max_token}")
-        # logger.info(f">>>self.temperature:{self.temperature}")
+        log.info(f">>>query:{type(query)}, json:{json.dumps(query, ensure_ascii=False)}")
+        log.info(f">>>self.history:{type(self.history)}, json:\n{json.dumps(self.history, ensure_ascii=False)}")
+        # log.info(f">>>self.do_sample:{self.do_sample}")
+        # log.info(f">>>self.max_token:{self.max_token}")
+        # log.info(f">>>self.temperature:{self.temperature}")
 
         openai.api_base = self.server_url
         openai.api_key = "any"
@@ -154,5 +154,5 @@ Action:
             "content": content
         })
 
-        logger.info(f"<<<self.history:{type(self.history)}, json:\n{json.dumps(self.history, ensure_ascii=False)}")
+        log.info(f"<<<self.history:{type(self.history)}, json:\n{json.dumps(self.history, ensure_ascii=False)}")
         return history

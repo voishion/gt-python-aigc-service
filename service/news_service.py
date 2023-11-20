@@ -3,7 +3,7 @@
 """
     Desc    : 说明
     Author  : Lu Li (李露)
-    File    : new_service.py
+    File    : news_service.py
     Date    : 2023/11/16 16:12
     Site    : https://gitee.com/voishion
     Project : gt-python-aigc-service
@@ -12,19 +12,21 @@ import time
 import traceback
 from typing import List
 
+from fastapi import HTTPException
 from langchain.agents import AgentType
 from langchain.agents import initialize_agent
 from langchain.agents import load_tools
-from loguru import logger
+from starlette import status
 
 from chatglm3.langchain.ChatGLM3Remote import ChatGLM3Remote
 from chatglm3.langchain.tool.News import News
 from common.singleton import singleton
 from config import settings
+from core.Logger import log
 
 
 @singleton
-class NewService(object):
+class NewsService(object):
     """
     新闻服务
     """
@@ -32,7 +34,7 @@ class NewService(object):
     def __init__(self):
         super().__init__()
 
-    def __run_tool(self, tools, llm, prompt_chain: List[str]) -> dict:
+    def __run_tool(self, tools, llm, prompt_chain: List[str]) -> str:
         loaded_tolls = []
         for tool in tools:
             if isinstance(tool, str):
@@ -48,17 +50,17 @@ class NewService(object):
 
         return agent.run(prompt_chain[0])
 
-    def search(self, prompt):
-        content = ''
+    def search(self, prompt) -> str:
         llm = ChatGLM3Remote()
         llm.load_model(server_url=settings.CHATGLM3_SERVER_URL)
         start_time = time.time()
         try:
             content = self.__run_tool([News()], llm, [prompt])
-        except:
-            logger.error(traceback.format_exc())
+        except Exception as e:
+            log.exception("发生异常：%s", str(e))
+            raise HTTPException(status.HTTP_502_BAD_GATEWAY, "操作失败，请稍后再试")
         finally:
-            logger.debug(f'执行耗时：{time.time() - start_time:.2f} s\n')
+            log.debug(f'执行耗时：{time.time() - start_time:.2f} s\n')
         return content
 
 
@@ -110,9 +112,9 @@ if __name__ == "__main__":
 
         begin_time = time.time()
         try:
-            search = NewService().search(query)
+            search = NewsService().search(prompt=query)
             print(search)
         except:
-            logger.error(traceback.format_exc())
+            log.error(traceback.format_exc())
         finally:
-            logger.debug(f'执行耗时：{time.time() - begin_time:.2f} s\n')
+            log.debug(f'执行耗时：{time.time() - begin_time:.2f} s\n')

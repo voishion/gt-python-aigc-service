@@ -28,9 +28,3 @@ class News(BaseTool):
 
     def _run(self, para: str) -> str:
         return self.get_news(para)
-
-
-if __name__ == "__main__":
-    news_tool = News()
-    news_info = news_tool.run("习近平")
-    print(news_info)

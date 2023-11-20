@@ -11,9 +11,11 @@
 from fastapi import APIRouter
 
 from api.endpoints import meeting
-from api.endpoints.helper import test_oath2
+from api.endpoints import news
+# from api.endpoints.helper import test_oath2
 
 api_router = APIRouter(prefix="/api/v1")
-api_router.post("/test/oath2", tags=["测试oath2授权"])(test_oath2)
+# api_router.post("/test/oath2", tags=["测试oath2授权"])(test_oath2)
 api_router.include_router(meeting.router, prefix='/meeting', tags=["会议处理"])
+api_router.include_router(news.router, prefix='/news', tags=["新闻处理"])
 
