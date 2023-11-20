@@ -106,7 +106,7 @@ class Logger:
         self.logger.add(sys.stdout,
                         format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | "
                                "<level>{level:<8}</level> | "
-                               "<yellow>{process:<5}</yellow> | "
+                               # "<yellow>{process:<5}</yellow> | "
                                "<magenta>{thread:<15}</magenta> | "
                                "<red>[{extra[trace_request_id]}]</red> | "
                                "<red>[{extra[trace_task_id]}]</red> | "
@@ -118,7 +118,7 @@ class Logger:
         self.logger.add(log_path,
                         format='{time:YYYY-MM-DD HH:mm:ss.SSS} | '
                                "{level:<8} | "
-                               "{process} | "
+                               # "{process} | "
                                "{thread} | "
                                "[{extra[trace_request_id]}] | "
                                "[{extra[trace_task_id]}] | "

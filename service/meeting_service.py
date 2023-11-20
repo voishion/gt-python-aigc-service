@@ -47,7 +47,7 @@ class MeetingService(object):
 
     def __get_model_response(self, req: Request, messages, stream=True):
         headers = {
-            "_idp_session": "MTAuNDIuNC4w%7CMGE3YmJhZjg4NThiOTVjNTcyMDNjMDg5YmYxYmFjZWJmYWFmNTVkMTA4YzdjNzc3OTRlMDUxZjE2ODY1ZjNiNg%3D%3D%7CpOXzn%2BC1SkAjYrLYDzuCadfIloY%3D",
+            "Authorization": "MTAuNDIuNC4w%7CMGE3YmJhZjg4NThiOTVjNTcyMDNjMDg5YmYxYmFjZWJmYWFmNTVkMTA4YzdjNzc3OTRlMDUxZjE2ODY1ZjNiNg%3D%3D%7CpOXzn%2BC1SkAjYrLYDzuCadfIloY%3D",
         }
         params = {
             "model": CHATGLM3_6B,
@@ -72,7 +72,7 @@ class MeetingService(object):
             {"role": "user", "content": self.__get_user_prompt(content)}
         ]
         start_time = time.time()
-        response = self.__get_model_response(messages=messages, stream=False)
+        response = self.__get_model_response(req=req, messages=messages, stream=False)
         log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
         return response['choices'][0]['message']['content']
 
@@ -91,7 +91,7 @@ class MeetingService(object):
         ]
         start_time = time.time()
         # 使用线程池执行API请求
-        response = self.__get_model_response(messages=messages)
+        response = self.__get_model_response(req=req, messages=messages)
         log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
         for chunk in response:
             delta = chunk.choices[0].delta
