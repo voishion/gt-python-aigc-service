@@ -77,7 +77,7 @@ class MeetingService(object):
         :param content: 会议内容
         :return: 会议总结推送生成器
         """
-        yield "data:Initializing...\n\n"
+        yield "data:\n\n"
 
         messages = [
             {"role": "system", "content": self.__get_system_prompt()},
@@ -93,7 +93,7 @@ class MeetingService(object):
                 _content = delta['content']
                 if _content:
                     yield "data:{}\n\n".format(_content)
-                    # time.sleep(0.5)
+                    time.sleep(0.5)
 
-        yield "data:Completed\n\n"
+        yield "data:\n\n"
         yield "event:end\nid:stop\ndata:END\n\n"
