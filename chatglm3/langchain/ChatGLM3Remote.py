@@ -21,7 +21,7 @@ from chatglm3.langchain.utils import tool_config_from_file
 class ChatGLM3Remote(LLM):
     max_token: int = 8192
     do_sample: bool = False
-    temperature: float = 0.65
+    temperature: float = 0.75
     top_p = 0.8
     tokenizer: object = None
     model: object = None
