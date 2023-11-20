@@ -125,5 +125,5 @@ class MeetingService(object):
         msg = '网络异常，请稍后再试'
         if isinstance(e, openai.error.APIError):
             if 'API rate limit exceeded' == e.json_body['message']:
-                msg = '目前使用人数较多，请稍后再试'
+                msg = '请求次数超限，请稍后再试'
         return msg
