@@ -14,6 +14,8 @@ from datetime import datetime
 import openai
 from fastapi import Request
 
+from common import const
+from common.const import IDP_SESSION
 from common.const import DATE_FORMAT, TIME_FORMAT, CHATGLM3_6B
 from common.singleton import singleton
 from config import settings
@@ -44,9 +46,9 @@ class MeetingService(object):
                 '文本内容如下：\n\n{}').format(content)
 
     def __get_model_response(self, req: Request, messages, stream=True):
+        _idp_session = req.cookies[IDP_SESSION] if IDP_SESSION in req.cookies else const.DEFAULT_IDP_SESSION
         headers = {
-            # "Authorization": "MTAuNDIuNC4w%7CMGE3YmJhZjg4NThiOTVjNTcyMDNjMDg5YmYxYmFjZWJmYWFmNTVkMTA4YzdjNzc3OTRlMDUxZjE2ODY1ZjNiNg%3D%3D%7CpOXzn%2BC1SkAjYrLYDzuCadfIloY%3D",
-            "Authorization": "zhaosi",
+            "Authorization": _idp_session,
         }
         params = {
             "model": CHATGLM3_6B,
