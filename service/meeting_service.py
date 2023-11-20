@@ -43,16 +43,19 @@ class MeetingService(object):
         return ('请将以下文本总结成会议纪要，重点在于会议核心思想以及会议内容，文本中包含说话人姓名和发言时间范围，请使用中文回复，'
                 '文本内容如下：\n\n{}').format(content)
 
-    def __get_model_response(self, messages, stream=True):
-        response = openai.ChatCompletion.create(
-            model=CHATGLM3_6B,
-            messages=messages,
-            max_tokens=2048,
-            temperature=0.75,
-            top_p=1,
-            stream=stream
-        )
-        return response
+    def __get_model_response(self, req: Request, messages, stream=True):
+        headers = {
+            "_idp_session": "MTAuNDIuNC4w%7CMGE3YmJhZjg4NThiOTVjNTcyMDNjMDg5YmYxYmFjZWJmYWFmNTVkMTA4YzdjNzc3OTRlMDUxZjE2ODY1ZjNiNg%3D%3D%7CpOXzn%2BC1SkAjYrLYDzuCadfIloY%3D",
+        }
+        params = {
+            "model": CHATGLM3_6B,
+            "messages": messages,
+            "max_tokens": 2048,
+            "temperature": 0.75,
+            "top_p": 1,
+            "stream": stream
+        }
+        return openai.ChatCompletion.create(**params, headers=headers)
 
     def meeting_summary(self, req: Request, content: str) -> str:
         """
