@@ -12,3 +12,5 @@ DATE_FORMAT = "%B %d, %Y"
 TIME_FORMAT = "%H:%M"
 
 CHATGLM3_6B = "chatglm3-6b"
+
+SSE_RETRY = 15000

@@ -17,7 +17,7 @@ from fastapi import Request
 from core import Utils
 from core.Logger import log
 
-from common.const import DATE_FORMAT, TIME_FORMAT, CHATGLM3_6B
+from common.const import DATE_FORMAT, TIME_FORMAT, CHATGLM3_6B, SSE_RETRY
 from common.singleton import singleton
 from config import settings
 
@@ -83,7 +83,7 @@ class MeetingService(object):
         :param content: 会议内容
         :return: 会议总结推送生成器
         """
-        yield "data:\neventTime:{}\n\n".format(Utils.current_time_millis())
+        yield "event:initializing\ndata:Initializing...\n\n"
 
         messages = [
             {"role": "system", "content": self.__get_system_prompt()},
@@ -98,8 +98,8 @@ class MeetingService(object):
             if "content" in delta:
                 _content = delta['content']
                 if _content:
-                    yield "data:{}\neventTime:{}\n\n".format(_content, Utils.current_time_millis())
+                    yield "data:{}\n\n".format(_content)
                     time.sleep(0.5)
 
-        yield "data:\n\n"
-        yield "event:end\nid:stop\ndata:END\neventTime:{}\n\n".format(Utils.current_time_millis())
+        yield "event:completed\ndata:Completed\n\n"
+        yield "event:end\ndata:END\n\n"

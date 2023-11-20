@@ -61,5 +61,47 @@
 <script src="{{ url_for('static', path='/js/main-d441790e.js') }}"></script>
 <script src="{{ url_for('static', path='/js/basic-9ff86e20.js') }}"></script>
 <script src="{{ url_for('static', path='/js/wikisj.js') }}"></script>
+<script>
+    const root_url = "{{ url_for('index') }}";
+    let sse_source = null;
+
+    function start_sse() {
+        if ('EventSource' in window) {
+            sse_source = new EventSource(root_url + 'api/v1/meeting/summary-sse?content=%E4%BD%A0%E6%98%AF%E8%B0%81%EF%BC%9F', {withCredentials: true});
+            sse_source.onopen = function (event) {
+                console.log('open', event)
+            };
+            sse_source.onerror = function (event) {
+                // 阻止默认的重试行为
+                event.preventDefault();
+                console.log('error', event)
+                // 在此处添加自定义的错误处理逻辑，如果需要的话
+                stop_sse();
+            };
+            // 自定义事件初始化
+            sse_source.addEventListener('initializing', function (event) {
+                console.log('initializing', event)
+            }, false);
+            sse_source.addEventListener('message', function (event) {
+                console.log('message', event)
+            }, false);
+            // 自定义事件处理完成
+            sse_source.addEventListener('completed', function (event) {
+                console.log('completed', event)
+            }, false);
+            // 自定义事件停止
+            sse_source.addEventListener('stop', function (event) {
+                console.log('stop', event)
+                stop_sse();
+            }, false);
+        }
+    }
+
+    function stop_sse() {
+        if (sse_source) {
+            sse_source.close();
+        }
+    }
+</script>
 </body>
 </html>
