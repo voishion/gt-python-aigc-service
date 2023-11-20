@@ -12,13 +12,11 @@ import time
 from datetime import datetime
 
 import openai
-from fastapi import Request
 
-from common import const
-from common.const import IDP_SESSION
 from common.const import DATE_FORMAT, TIME_FORMAT, CHATGLM3_6B
 from common.singleton import singleton
 from config import settings
+from core.IdpSession import IdpSession
 from core.Logger import log
 
 
@@ -45,8 +43,8 @@ class MeetingService(object):
         return ('请将以下文本总结成会议纪要，重点在于会议核心思想以及会议内容，文本中包含说话人姓名和发言时间范围，请使用中文回复，'
                 '文本内容如下：\n\n{}').format(content)
 
-    def __get_model_response(self, req: Request, messages, stream=True):
-        _idp_session = req.cookies[IDP_SESSION] if IDP_SESSION in req.cookies else const.DEFAULT_IDP_SESSION
+    def __get_model_response(self, messages, stream=True):
+        _idp_session = IdpSession.get_idp_session()
         headers = {
             "Authorization": _idp_session,
         }
@@ -61,10 +59,9 @@ class MeetingService(object):
         }
         return openai.ChatCompletion.create(**params)
 
-    def meeting_summary(self, req: Request, content: str) -> str:
+    def meeting_summary(self, content: str) -> str:
         """
         会议总结处理
-        :param req: 请求对象
         :param content: 会议内容
         :return: 会议总结
         """
@@ -74,7 +71,7 @@ class MeetingService(object):
         ]
         start_time = time.time()
         try:
-            response = self.__get_model_response(req=req, messages=messages, stream=False)
+            response = self.__get_model_response(messages=messages, stream=False)
             result = response['choices'][0]['message']['content']
         except Exception as e:
             log.exception("发生异常：%s", str(e))
@@ -83,10 +80,9 @@ class MeetingService(object):
             log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
         return result
 
-    def meeting_summary_sse(self, req: Request, content: str):
+    def meeting_summary_sse(self, content: str):
         """
         会议总结处理，SSE
-        :param req: 请求对象
         :param content: 会议内容
         :return: 会议总结推送生成器
         """
@@ -99,7 +95,7 @@ class MeetingService(object):
         start_time = time.time()
         # 使用线程池执行API请求
         try:
-            response = self.__get_model_response(req=req, messages=messages)
+            response = self.__get_model_response(messages=messages)
             log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
             for chunk in response:
                 delta = chunk.choices[0].delta
