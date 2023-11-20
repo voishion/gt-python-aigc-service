@@ -14,12 +14,10 @@ from datetime import datetime
 import openai
 from fastapi import Request
 
-from core import Utils
-from core.Logger import log
-
-from common.const import DATE_FORMAT, TIME_FORMAT, CHATGLM3_6B, SSE_RETRY
+from common.const import DATE_FORMAT, TIME_FORMAT, CHATGLM3_6B
 from common.singleton import singleton
 from config import settings
+from core.Logger import log
 
 
 @singleton
@@ -91,15 +89,33 @@ class MeetingService(object):
         ]
         start_time = time.time()
         # 使用线程池执行API请求
-        response = self.__get_model_response(req=req, messages=messages)
-        log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
-        for chunk in response:
-            delta = chunk.choices[0].delta
-            if "content" in delta:
-                _content = delta['content']
-                if _content:
-                    yield "data:{}\n\n".format(_content)
-                    time.sleep(0.5)
+        try:
+            response = self.__get_model_response(req=req, messages=messages)
+            log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
+            for chunk in response:
+                delta = chunk.choices[0].delta
+                if "content" in delta:
+                    _content = delta['content']
+                    if _content:
+                        yield "data:{}\n\n".format(_content)
+                        time.sleep(0.5)
 
+        except Exception as e:
+            log.exception("发生异常：%s", str(e))
+            yield "data:{}\n\n".format(self.__get_exp_msg(e))
+
+        # 处理完成
         yield "event:completed\ndata:Completed\n\n"
         yield "event:end\ndata:End\n\n"
+
+    def __get_exp_msg(self, e):
+        """
+        获取异常信息
+        :param e:
+        :return:
+        """
+        msg = '网络异常，请稍后再试'
+        if isinstance(e, openai.error.APIError):
+            if 'API rate limit exceeded' == e.json_body['message']:
+                msg = '目前使用人数较多，请稍后再试'
+        return msg
