@@ -8,12 +8,12 @@
     Site    : https://gitee.com/voishion
     Project : gt-python-aigc-service
 """
-from contextvars import ContextVar
 
 from config import settings
+from core.ThreadLocal import ThreadLocal
 
 # 全链路_idp_session
-_x_idp_session: ContextVar[str] = ContextVar('x_idp_session', default=settings.PROJECT_NAME)  # 请求ID
+_x_idp_session = ThreadLocal("x_idp_session", default=settings.PROJECT_NAME)  # _idp_session
 
 
 class IdpSession:
@@ -28,7 +28,7 @@ class IdpSession:
         :param idp_session: _idp_session
         :return: None
         """
-        _x_idp_session.set(idp_session)
+        _x_idp_session.data = idp_session
 
     @staticmethod
     def get_idp_session() -> str:
@@ -36,4 +36,4 @@ class IdpSession:
         获取全链路_idp_session
         :return: _idp_session
         """
-        return _x_idp_session.get()
+        return _x_idp_session.data

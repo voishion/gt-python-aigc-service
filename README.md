@@ -20,3 +20,14 @@ uvicorn app:app --reload
 # 指定IP和端口
 python -m uvicorn app:app --reload --host 10.133.68.144 --port 9000
 ```
+
+```python
+# 线程调用示例：创建一个跳舞的线程
+dance_thread = threading.Thread(target=self.dance, kwargs={"msg": "我在跳舞哦 啦啦啦", "req_id": TraceID.get_req_id()})
+dance_thread.start()
+
+def dance(self, msg, *args, **kwargs):
+    TraceID.set(**kwargs)
+    log.error("------------》「{}」{}", msg, kwargs)
+    time.sleep(1)
+```

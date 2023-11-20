@@ -9,6 +9,8 @@
     Project : gt-python-aigc-service
 """
 
+from core.ThreadLocal import ThreadLocal
+
 '''
     # <red>: 红色
     # <green>: 绿色
@@ -27,7 +29,6 @@ import logging
 from types import FrameType
 from typing import cast
 from loguru import logger
-from contextvars import ContextVar
 from config import settings
 
 __all__ = ["log", "Loggers"]
@@ -38,21 +39,33 @@ EXCLUDE_LOG_NAME = {
 }
 
 # 全链路日志追踪
-_x_trace_request_id: ContextVar[str] = ContextVar('x_trace_request_id', default="-")  # 请求ID
-_x_trace_task_id: ContextVar[str] = ContextVar('x_trace_task_id', default="-")  # 任务ID
+_x_trace_task_id = ThreadLocal('x_trace_task_id', default="-")  # 任务ID
+_x_trace_request_id = ThreadLocal("x_trace_request_id", default="-")  # 请求ID
 
 
 class TraceID:
     """全链路追踪ID"""
 
     @staticmethod
+    def set(**kwargs):
+        """
+        设置全链路追踪请求ID
+        :param kwargs: req_id-请求ID
+        :param kwargs: task_id-任务ID
+        """
+        if 'req_id' in kwargs:
+            TraceID.set_req_id(kwargs['req_id'])
+        if 'task_id' in kwargs:
+            task_info = kwargs['task_id'].split(':')
+            TraceID.set_task_id(task_info[0], task_info[1])
+
+    @staticmethod
     def set_req_id(req_id: str):
         """
         设置全链路追踪请求ID
         :param req_id: 请求ID
-        :return: None
         """
-        _x_trace_request_id.set(req_id)
+        _x_trace_request_id.data = req_id
 
     @staticmethod
     def get_req_id() -> str:
@@ -60,7 +73,7 @@ class TraceID:
         获取全链路追踪请求ID
         :return: 请求ID
         """
-        return _x_trace_request_id.get()
+        return _x_trace_request_id.data
 
     @staticmethod
     def set_task_id(task_id: str, task_name: str = "task"):
@@ -70,7 +83,7 @@ class TraceID:
         :param task_name: 任务名称
         :return: None
         """
-        _x_trace_task_id.set('{}:{}'.format(task_id, task_name))
+        _x_trace_task_id.data('{}:{}'.format(task_id, task_name))
 
     @staticmethod
     def get_task_id():
@@ -78,7 +91,7 @@ class TraceID:
         获取全链路追踪任务ID
         :return: 任务ID
         """
-        return _x_trace_task_id.get()
+        return _x_trace_task_id.data
 
 
 class Logger:
@@ -106,7 +119,7 @@ class Logger:
         self.logger.add(sys.stdout,
                         format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | "
                                "<level>{level:<8}</level> | "
-                               # "<yellow>{process:<5}</yellow> | "
+                        # "<yellow>{process:<5}</yellow> | "
                                "<magenta>{thread:<15}</magenta> | "
                                "<red>[{extra[trace_request_id]}]</red> | "
                                "<red>[{extra[trace_task_id]}]</red> | "
@@ -118,7 +131,7 @@ class Logger:
         self.logger.add(log_path,
                         format='{time:YYYY-MM-DD HH:mm:ss.SSS} | '
                                "{level:<8} | "
-                               # "{process} | "
+                        # "{process} | "
                                "{thread} | "
                                "[{extra[trace_request_id]}] | "
                                "[{extra[trace_task_id]}] | "
