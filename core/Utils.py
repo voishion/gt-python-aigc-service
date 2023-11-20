@@ -72,7 +72,7 @@ def code_number(ln: int):
 def current_time_millis() -> int:
     """
     获取当前时间戳
-    :return:
+    :return: 时间戳，如：1700448538223
     """
     import time
     return int(time.time() * 1000)
