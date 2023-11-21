@@ -8,8 +8,7 @@
     Site    : https://gitee.com/voishion
     Project : gt-python-aigc-service
 """
-
-from core.ThreadLocal import ThreadLocal
+from core.Tl import TraceID
 
 '''
     # <red>: 红色
@@ -37,61 +36,6 @@ __all__ = ["log", "Loggers"]
 EXCLUDE_LOG_NAME = {
     'uvicorn.protocols.http.httptools_impl'
 }
-
-# 全链路日志追踪
-_x_trace_task_id = ThreadLocal('x_trace_task_id', default="-")  # 任务ID
-_x_trace_request_id = ThreadLocal("x_trace_request_id", default="-")  # 请求ID
-
-
-class TraceID:
-    """全链路追踪ID"""
-
-    @staticmethod
-    def set(**kwargs):
-        """
-        设置全链路追踪请求ID
-        :param kwargs: req_id-请求ID
-        :param kwargs: task_id-任务ID
-        """
-        if 'req_id' in kwargs:
-            TraceID.set_req_id(kwargs['req_id'])
-        if 'task_id' in kwargs:
-            task_info = kwargs['task_id'].split(':')
-            TraceID.set_task_id(task_info[0], task_info[1])
-
-    @staticmethod
-    def set_req_id(req_id: str):
-        """
-        设置全链路追踪请求ID
-        :param req_id: 请求ID
-        """
-        _x_trace_request_id.data = req_id
-
-    @staticmethod
-    def get_req_id() -> str:
-        """
-        获取全链路追踪请求ID
-        :return: 请求ID
-        """
-        return _x_trace_request_id.data
-
-    @staticmethod
-    def set_task_id(task_id: str, task_name: str = "task"):
-        """
-        设置全链路追踪任务ID，例如:TraceID.set_task_id('A', 'into_summary_sse')
-        :param task_id: 任务ID
-        :param task_name: 任务名称
-        :return: None
-        """
-        _x_trace_task_id.data('{}:{}'.format(task_id, task_name))
-
-    @staticmethod
-    def get_task_id():
-        """
-        获取全链路追踪任务ID
-        :return: 任务ID
-        """
-        return _x_trace_task_id.data
 
 
 class Logger:

@@ -16,7 +16,7 @@ import openai
 from common.const import DATE_FORMAT, TIME_FORMAT, CHATGLM3_6B
 from common.singleton import singleton
 from config import settings
-from core.IdpSession import IdpSession
+from core.Tl import IdpSession
 from core.Logger import log
 
 

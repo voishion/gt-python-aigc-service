@@ -22,3 +22,6 @@ DEFAULT_IDP_SESSION = settings.PROJECT_NAME
 
 TASK_ID_KEY = "X-Task-Id"
 REQUEST_ID_KEY = "X-Request-Id"
+
+CENTER_STROKE_LINE = "-"
+"""中划线"""

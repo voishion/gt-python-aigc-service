@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-    Desc    : ThreadLocal
+    Desc    : Plugins类集中声明文件
     Author  : Lu Li (李露)
-    File    : ThreadLocal.py
+    File    : Plugins.py
     Date    : 2023/11/20 17:12
     Site    : https://gitee.com/voishion
     Project : gt-python-aigc-service

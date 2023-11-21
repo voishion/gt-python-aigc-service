@@ -14,7 +14,7 @@ import traceback
 
 import requests
 
-from core.IdpSession import IdpSession
+from core.Tl import IdpSession
 
 
 def search(keyword: str) -> dict:
