@@ -76,3 +76,11 @@ def current_time_millis() -> int:
     """
     import time
     return int(time.time() * 1000)
+
+
+def simple_uuid() -> str:
+    """
+    生成简单的UUID字符串
+    :return: UUID，如：dd318b1b11ab4e7f9fd68b73b7799446
+    """
+    return str(uuid.uuid4()).replace('-', '')

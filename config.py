@@ -32,12 +32,12 @@ class Config(BaseSettings):
     STATIC_DIR: str = os.path.join(os.getcwd(), "static")
     TEMPLATE_DIR: str = os.path.join(os.getcwd(), "templates")
     # 跨域请求
-    CORS_ORIGINS: List = ["http://10.152.160.27:61439", "*"]
+    CORS_ORIGINS: List = ["*"]
     CORS_ALLOW_CREDENTIALS: bool = True
     CORS_ALLOW_METHODS: List = ["*"]
     CORS_ALLOW_HEADERS: List = ["*"]
     # Session
-    SECRET_KEY: str = "session"
+    SECRET_KEY: str = "eb3e38720c7a432fab6f1126b97a968e"
     SESSION_COOKIE: str = "session_id"
     SESSION_MAX_AGE: int = 14 * 24 * 60 * 60
     # Jwt
