@@ -10,7 +10,7 @@
 """
 from typing import Optional
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Request
 from fastapi.responses import StreamingResponse
 
 from core.Response import success
@@ -19,6 +19,15 @@ from service.meeting_service import MeetingService
 
 router = APIRouter(prefix='')
 
+@router.get(
+    path='/message-id',
+    summary="会议总结消息ID",
+    description="获取会议总结消息ID",
+    response_model=meeting.MeetingMessageIdResp,
+)
+async def message_id(req: Request):
+    result = MeetingService().message_id(req)
+    return success(msg="会议总结消息ID生成完成", data=result)
 
 @router.post(
     path='/summary',
@@ -36,6 +45,10 @@ async def summary(post: meeting.MeetingSummaryReq):
     summary="会议总结 SSE",
     description="通过人工智能实现文字会议纪要的总结 (SSE)",
 )
+async def summary_sse(content: Optional[str] = Query(default="你是谁？", min_length=1, description="会议内容")):
+    generator = MeetingService().meeting_summary_sse(content)
+    return StreamingResponse(generator, media_type="text/event-stream")
+
 async def summary_sse(content: Optional[str] = Query(default="你是谁？", min_length=1, description="会议内容")):
     generator = MeetingService().meeting_summary_sse(content)
     return StreamingResponse(generator, media_type="text/event-stream")

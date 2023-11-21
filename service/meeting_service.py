@@ -13,9 +13,11 @@ from datetime import datetime
 
 import openai
 
+from fastapi import Request
 from common.const import DATE_FORMAT, TIME_FORMAT, CHATGLM3_6B
 from common.singleton import singleton
 from config import settings
+from core import Utils
 from core.Tl import IdpSession
 from core.Logger import log
 
@@ -59,6 +61,10 @@ class MeetingService(object):
         }
         return openai.ChatCompletion.create(**params)
 
+    def message_id(self, req: Request) -> str:
+        message_id = Utils.simple_uuid4()
+        return message_id
+
     def meeting_summary(self, content: str) -> str:
         """
         会议总结处理
@@ -97,13 +103,18 @@ class MeetingService(object):
         try:
             response = self.__get_model_response(messages=messages)
             log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
+            # count = 0
             for chunk in response:
+                # if 4 == count:
+                #     response.close()
+                #     break
                 delta = chunk.choices[0].delta
                 if "content" in delta:
                     _content = delta['content']
                     if _content:
+                        # count += 1
                         yield "data:{}\n\n".format(_content)
-                        time.sleep(0.5)
+                        time.sleep(0.1)
         except Exception as e:
             log.exception("发生异常：%s", str(e))
             yield "data:{}\n\n".format(self.__get_exp_msg(e))

@@ -15,6 +15,10 @@ from pydantic import Field, BaseModel
 from schemas.base import BaseResp
 
 
+class MeetingMessageIdResp(BaseResp):
+    data: Optional[str] = Field(description="会议总结消息ID")
+
+
 class MeetingSummaryReq(BaseModel):
     content: Optional[str] = Field(min_length=1, max_length=999999, description="会议内容")
 
