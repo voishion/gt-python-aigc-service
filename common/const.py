@@ -28,3 +28,6 @@ CENTER_STROKE_LINE = "-"
 
 EMPTY_STR = ""
 """空字符串"""
+
+REDIS_CACHE_ROOT_KEY = "gt-python-aigc-service"
+"""Redis缓存键根"""

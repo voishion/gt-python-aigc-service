@@ -12,14 +12,15 @@ import time
 from datetime import datetime
 
 import openai
-
 from fastapi import Request
+
 from common.const import DATE_FORMAT, TIME_FORMAT, CHATGLM3_6B
 from common.singleton import singleton
 from config import settings
 from core import Utils
-from core.Tl import IdpSession
 from core.Logger import log
+from core.RedisHelper import RedisKey, RedisService
+from core.Tl import IdpSession
 
 
 @singleton
@@ -63,6 +64,7 @@ class MeetingService(object):
 
     def message_id(self, req: Request) -> str:
         message_id = Utils.simple_uuid4()
+        RedisService.set(req, RedisKey.message_id_key(message_id), message_id, 10 * 60)
         return message_id
 
     def meeting_summary(self, content: str) -> str:

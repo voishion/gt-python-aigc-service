@@ -10,11 +10,13 @@
 """
 from typing import Callable
 
+from aioredis import Redis
 from fastapi import FastAPI
 
 from config import settings
 from core.Exts import openaiThreadPool
 from core.Logger import log
+from database.redis import sys_cache
 
 
 def startup(app: FastAPI) -> Callable:
@@ -30,8 +32,7 @@ def startup(app: FastAPI) -> Callable:
         # 注册数据库
         # await register_mysql(app)
         # 注入缓存到app state
-        # app.state.cache = await sys_cache()
-        # app.state.code_cache = await code_cache()
+        app.state.cache = await sys_cache()
         app.state.openai_thread_pool = await openaiThreadPool()
 
         pass
@@ -49,9 +50,7 @@ def stopping(app: FastAPI) -> Callable:
     async def stop_app() -> None:
         # APP停止时触发
         log.info("{}已停止", settings.PROJECT_NAME)
-        # cache: Redis = await app.state.cache
-        # code: Redis = await app.state.code_cache
-        # await cache.close()
-        # await code.close()
+        cache: Redis = await app.state.cache
+        await cache.close()
 
     return stop_app
