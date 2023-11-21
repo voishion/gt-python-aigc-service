@@ -32,7 +32,7 @@ class Config(BaseSettings):
     STATIC_DIR: str = os.path.join(os.getcwd(), "static")
     TEMPLATE_DIR: str = os.path.join(os.getcwd(), "templates")
     # 跨域请求
-    CORS_ORIGINS: List = ["*"]
+    CORS_ORIGINS: List = ["http://10.152.160.27:61439", "*"]
     CORS_ALLOW_CREDENTIALS: bool = True
     CORS_ALLOW_METHODS: List = ["*"]
     CORS_ALLOW_HEADERS: List = ["*"]
