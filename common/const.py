@@ -25,3 +25,6 @@ REQUEST_ID_KEY = "X-Request-Id"
 
 CENTER_STROKE_LINE = "-"
 """中划线"""
+
+EMPTY_STR = ""
+"""空字符串"""

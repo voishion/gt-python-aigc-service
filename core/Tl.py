@@ -8,15 +8,16 @@
     Site    : https://gitee.com/voishion
     Project : gt-python-aigc-service
 """
+from contextvars import ContextVar
+
 from common import const
 from config import settings
-from core.Plugins import ThreadLocal
 
 # 全链路_idp_session
-_x_idp_session = ThreadLocal("x_idp_session", default=settings.PROJECT_NAME)  # _idp_session
+_x_idp_session = ContextVar("x_idp_session", default=settings.PROJECT_NAME)  # _idp_session
 # 全链路日志追踪
-_x_trace_task_id = ThreadLocal('x_trace_task_id', default=const.CENTER_STROKE_LINE)  # 任务ID
-_x_trace_request_id = ThreadLocal("x_trace_request_id", default=const.CENTER_STROKE_LINE)  # 请求ID
+_x_trace_task_id = ContextVar('x_trace_task_id', default=const.CENTER_STROKE_LINE)  # 任务ID
+_x_trace_request_id = ContextVar("x_trace_request_id", default=const.CENTER_STROKE_LINE)  # 请求ID
 
 
 def setCurrThreadInfo(**kwargs):
@@ -50,7 +51,7 @@ class TraceID:
         设置全链路追踪请求ID
         :param req_id: 请求ID
         """
-        _x_trace_request_id.data = req_id
+        _x_trace_request_id.set(req_id)
 
     @staticmethod
     def get_req_id() -> str:
@@ -58,7 +59,7 @@ class TraceID:
         获取全链路追踪请求ID
         :return: 请求ID
         """
-        return _x_trace_request_id.data
+        return _x_trace_request_id.get()
 
     @staticmethod
     def set_task_id(task_id: str, task_name: str = "task"):
@@ -68,7 +69,7 @@ class TraceID:
         :param task_name: 任务名称
         :return: None
         """
-        _x_trace_task_id.data = '{}:{}'.format(task_id, task_name)
+        _x_trace_task_id.set('{}:{}'.format(task_id, task_name))
 
     @staticmethod
     def get_task_id():
@@ -76,7 +77,7 @@ class TraceID:
         获取全链路追踪任务ID
         :return: 任务ID
         """
-        return _x_trace_task_id.data
+        return _x_trace_task_id.get()
 
 
 class IdpSession:
@@ -91,7 +92,7 @@ class IdpSession:
         :param idp_session: _idp_session
         :return: None
         """
-        _x_idp_session.data = idp_session
+        _x_idp_session.set(idp_session)
 
     @staticmethod
     def get_idp_session() -> str:
@@ -99,4 +100,4 @@ class IdpSession:
         获取全链路_idp_session
         :return: _idp_session
         """
-        return _x_idp_session.data
+        return _x_idp_session.get()

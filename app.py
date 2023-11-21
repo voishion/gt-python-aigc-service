@@ -8,9 +8,8 @@
     Site    : https://gitee.com/voishion
     Project : gt-python-aigc-service
 """
-import uuid
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import (get_redoc_html, get_swagger_ui_html, get_swagger_ui_oauth2_redirect_html)
@@ -18,14 +17,12 @@ from fastapi.openapi.utils import get_openapi
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
-from starlette.responses import JSONResponse
 from tortoise.exceptions import OperationalError, DoesNotExist, IntegrityError, ValidationError
 
-from common.const import IDP_SESSION, DEFAULT_IDP_SESSION, REQUEST_ID_KEY, TASK_ID_KEY
 from config import settings
 from core import Exception, Events, Router, Middleware
-from core.Tl import TraceID, IdpSession
-from core.Logger import Loggers, log
+from core.Logger import Loggers
+from core.Middleware import RequestMiddleware
 
 application = FastAPI(
     debug=settings.APP_DEBUG,
@@ -114,35 +111,7 @@ application.add_middleware(
     max_age=settings.SESSION_MAX_AGE
 )
 
-
-@application.middleware("http")
-async def request_trace_id_middleware(request: Request, call_next):
-    try:
-        # log.debug("Request started")
-
-        idp_session = request.cookies[IDP_SESSION] if IDP_SESSION in request.cookies else DEFAULT_IDP_SESSION
-        IdpSession.set_idp_session(idp_session)
-
-        req_id = request.headers.get(REQUEST_ID_KEY, '')
-        if not req_id:
-            req_id = str(uuid.uuid4())
-        TraceID.set_req_id(req_id)
-
-        response = await call_next(request)
-
-        response.headers[REQUEST_ID_KEY] = TraceID.get_req_id()
-        response.headers[TASK_ID_KEY] = TraceID.get_task_id()
-        return response
-    except Exception as exc:
-        log.error(f"Request failed: {exc}")
-        return JSONResponse({
-            "code": -1,
-            "message": exc.__str__(),
-            "data": []
-        }, status_code=500)
-    finally:
-        # log.debug("Request ended")
-        pass
+application.add_middleware(RequestMiddleware)
 
 
 # 路由
