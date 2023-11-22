@@ -100,7 +100,8 @@ async def lfasr_info(
     response_model=meeting.MeetingSummaryResp,
 )
 async def test():
-    print(os.getenv("RUN_ENV", "test"))
+    print(os.getenv("RUN_ENV"))
     print(os.getenv("VERSION"))
     print(settings.VERSION)
+    print(settings.LOG_LEVEL)
     return success(msg="查询完成", data="success")
