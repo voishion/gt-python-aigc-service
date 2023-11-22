@@ -113,7 +113,6 @@ application.add_middleware(
 
 application.add_middleware(RequestMiddleware)
 
-
 # 路由
 application.include_router(Router.router)
 

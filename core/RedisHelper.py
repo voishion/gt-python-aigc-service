@@ -10,25 +10,27 @@
 """
 from typing import Awaitable
 
-from fastapi import Request
-
 from common.const import REDIS_CACHE_ROOT_KEY
+from database import DBHolder
 
 
 class RedisService:
     """Redis服务"""
 
     @staticmethod
-    async def set(req: Request, key: str, value, expire_seconds: int) -> Awaitable:
+    async def set(key: str, value, expire_seconds: int) -> Awaitable:
         """
         设置缓存
-        :param req: 请求对象
         :param key: 缓存键
         :param value: 缓存值
         :param expire_seconds: 过期时间，秒
         :return:
         """
-        return await req.app.state.cache.set(name=key, value=value, ex=expire_seconds)
+        return await DBHolder.get_instance().redis.set(name=key, value=value, ex=expire_seconds)
+
+    @staticmethod
+    async def get(key: str):
+        return await DBHolder.get_instance().redis.get(key)
 
 
 class RedisKey:

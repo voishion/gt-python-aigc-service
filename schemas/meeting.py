@@ -24,8 +24,12 @@ class MeetingMessageIdResp(BaseResp):
 
 
 class MeetingSummaryReq(BaseModel):
-    content: Optional[str] = Field(min_length=1, max_length=999999, description="会议内容")
+    message_id: Optional[str] = Field(min_length=32, max_length=32, description="消息编号")
 
 
 class MeetingSummaryResp(BaseResp):
     data: Optional[str] = Field(description="会议总结")
+
+
+class MeetingSummaryStopResp(BaseResp):
+    data: Optional[bool] = Field(description="停止结果：true-成功，false-失败")

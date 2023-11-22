@@ -26,8 +26,8 @@ router = APIRouter(prefix='')
     description="上送会议内容获取会议总结消息ID",
     response_model=meeting.MeetingMessageIdResp,
 )
-async def message_id(req: Request, post: meeting.MeetingMessageIdReq):
-    result = await MeetingService().message_id(req, post.content)
+async def message_id(post: meeting.MeetingMessageIdReq):
+    result = await MeetingService().message_id(post.content)
     return success(msg="会议总结消息ID生成完成", data=result)
 
 
@@ -38,7 +38,7 @@ async def message_id(req: Request, post: meeting.MeetingMessageIdReq):
     response_model=meeting.MeetingSummaryResp,
 )
 async def summary(post: meeting.MeetingSummaryReq):
-    result = MeetingService().meeting_summary(post.content)
+    result = await MeetingService().meeting_summary(post.message_id)
     return success(msg="会议总结完成", data=result)
 
 
@@ -47,6 +47,17 @@ async def summary(post: meeting.MeetingSummaryReq):
     summary="会议总结 SSE",
     description="通过人工智能实现文字会议纪要的总结 (SSE)",
 )
-async def summary_sse(content: Optional[str] = Query(default="你是谁？", min_length=1, description="会议内容")):
-    generator = MeetingService().meeting_summary_sse(content)
+async def summary_sse(message_id: Optional[str] = Query(min_length=32, max_length=32, description="消息编号")):
+    generator = MeetingService().meeting_summary_sse(message_id)
     return StreamingResponse(generator, media_type="text/event-stream")
+
+
+@router.post(
+    path='/summary-sse-stop',
+    summary="停止会议总结",
+    description="停止通过人工智能实现文字会议纪要的总结",
+    response_model=meeting.MeetingSummaryStopResp,
+)
+async def summary(post: meeting.MeetingSummaryReq):
+    result = await MeetingService().meeting_summary_sse_stop(post.message_id)
+    return success(msg="会议总结停止操作完成", data=result)

@@ -8,11 +8,13 @@
     Site    : https://gitee.com/voishion
     Project : gt-python-aigc-service
 """
+import asyncio
 import time
 from datetime import datetime
 
 import openai
-from fastapi import Request
+from starlette import status
+from starlette.exceptions import HTTPException
 
 from common.const import DATE_FORMAT, TIME_FORMAT, CHATGLM3_6B
 from common.enums import MessageStatus
@@ -55,7 +57,7 @@ class MeetingService(object):
         return ('请将以下文本总结成会议纪要，重点在于会议核心思想以及会议内容，文本中包含说话人姓名和发言时间范围，请使用中文回复，'
                 '文本内容如下：\n\n{}').format(content)
 
-    def __get_model_response(self, messages, stream=True):
+    async def __get_model_response(self, messages, stream=True):
         _idp_session = IdpSession.get_idp_session()
         headers = {
             "Authorization": _idp_session,
@@ -71,25 +73,26 @@ class MeetingService(object):
         }
         return openai.ChatCompletion.create(**params)
 
-    async def message_id(self, req: Request, content: str) -> str:
+    async def message_id(self, content: str) -> str:
         message_id = Utils.simple_uuid4()
-        await RedisService.set(req, RedisKey.message_status(message_id), MessageStatus.NORMAL.value, 24 * 60 * 60)
-        await RedisService.set(req, RedisKey.message_content(message_id), content, 24 * 60 * 60)
+        await RedisService.set(RedisKey.message_status(message_id), MessageStatus.NORMAL.value, 24 * 60 * 60)
+        await RedisService.set(RedisKey.message_content(message_id), content, 24 * 60 * 60)
         return message_id
 
-    def meeting_summary(self, content: str) -> str:
+    async def meeting_summary(self, message_id: str) -> str:
         """
         会议总结处理
-        :param content: 会议内容
+        :param message_id: 消息编号
         :return: 会议总结
         """
+        content = await self.__check_and_get_content(message_id)
         messages = [
             {"role": "system", "content": self.__get_system_prompt()},
             {"role": "user", "content": self.__get_user_prompt(content)}
         ]
         start_time = time.time()
         try:
-            response = self.__get_model_response(messages=messages, stream=False)
+            response = await self.__get_model_response(messages=messages, stream=False)
             result = response['choices'][0]['message']['content']
         except Exception as e:
             log.exception("发生异常：%s", str(e))
@@ -98,12 +101,14 @@ class MeetingService(object):
             log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
         return result
 
-    def meeting_summary_sse(self, content: str):
+    async def meeting_summary_sse(self, message_id: str):
         """
         会议总结处理，SSE
-        :param content: 会议内容
+        :param message_id: 消息编号
         :return: 会议总结推送生成器
         """
+        content = await self.__check_and_get_content(message_id)
+
         yield "event:initializing\ndata:Initializing...\n\n"
 
         messages = [
@@ -111,22 +116,20 @@ class MeetingService(object):
             {"role": "user", "content": self.__get_user_prompt(content)}
         ]
         start_time = time.time()
-        # 使用线程池执行API请求
         try:
-            response = self.__get_model_response(messages=messages)
+            response = await self.__get_model_response(messages=messages)
             log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
-            # count = 0
             for chunk in response:
-                # if 4 == count:
-                #     response.close()
-                #     break
+                msg_status = await RedisService.get(RedisKey.message_status(message_id))
+                if MessageStatus.STOP == msg_status:
+                    response.close()
+                    break
                 delta = chunk.choices[0].delta
                 if "content" in delta:
                     _content = delta['content']
                     if _content:
-                        # count += 1
                         yield "data:{}\n\n".format(_content)
-                        time.sleep(0.1)
+                        await asyncio.sleep(0.5)
         except Exception as e:
             log.exception("发生异常：%s", str(e))
             yield "data:{}\n\n".format(self.__get_exp_msg(e))
@@ -134,6 +137,15 @@ class MeetingService(object):
         # 处理完成
         yield "event:completed\ndata:Completed\n\n"
         yield "event:end\ndata:End\n\n"
+
+    async def meeting_summary_sse_stop(self, message_id: str) -> bool:
+        """
+        停止会议总结处理
+        :param message_id: 消息编号
+        :return: 停止结果：true-成功，false-失败
+        """
+        coroutine = await RedisService.set(RedisKey.message_status(message_id), MessageStatus.STOP.value, 24 * 60 * 60)
+        return bool(coroutine)
 
     def __get_exp_msg(self, e):
         """
@@ -146,3 +158,14 @@ class MeetingService(object):
             if 'API rate limit exceeded' == e.json_body['message']:
                 msg = '请求次数超限，请稍后再试'
         return msg
+
+    async def __check_and_get_content(self, message_id) -> str:
+        """
+        检查并获取消息内容
+        :param message_id:
+        :return:
+        """
+        content = await RedisService.get(RedisKey.message_content(message_id))
+        if not content:
+            raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "消息内容不存在")
+        return content

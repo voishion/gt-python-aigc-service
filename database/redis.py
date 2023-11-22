@@ -9,8 +9,9 @@
     Project : gt-python-aigc-service
 """
 
-import aioredis
 import os
+
+import aioredis
 from aioredis import Redis
 
 
