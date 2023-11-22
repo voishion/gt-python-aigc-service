@@ -15,6 +15,7 @@ import openai
 from fastapi import Request
 
 from common.const import DATE_FORMAT, TIME_FORMAT, CHATGLM3_6B
+from common.enums import MessageStatus
 from common.singleton import singleton
 from config import settings
 from core import Utils
@@ -30,6 +31,14 @@ class MeetingService(object):
     """
     openai.api_base = settings.CHATGLM3_SERVER_URL
     openai.api_key = "any"
+
+    @staticmethod
+    def instance():
+        """
+        会议服务实例
+        :return:
+        """
+        return MeetingService()
 
     def __init__(self):
         super().__init__()
@@ -62,9 +71,10 @@ class MeetingService(object):
         }
         return openai.ChatCompletion.create(**params)
 
-    def message_id(self, req: Request) -> str:
+    async def message_id(self, req: Request, content: str) -> str:
         message_id = Utils.simple_uuid4()
-        RedisService.set(req, RedisKey.message_id_key(message_id), message_id, 10 * 60)
+        await RedisService.set(req, RedisKey.message_status(message_id), MessageStatus.NORMAL.value, 24 * 60 * 60)
+        await RedisService.set(req, RedisKey.message_content(message_id), content, 24 * 60 * 60)
         return message_id
 
     def meeting_summary(self, content: str) -> str:

@@ -22,3 +22,21 @@ class Scopes(Enum):
 
     def __str__(self):
         return self.name
+
+
+class MessageStatus(Enum):
+    """
+    消息状态
+    """
+
+    STOP = 0
+    """停止"""
+
+    NORMAL = 1
+    """正常"""
+
+    def __str__(self):
+        return self.name
+
+if __name__ == '__main__':
+    print(MessageStatus.NORMAL.value)

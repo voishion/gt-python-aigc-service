@@ -19,7 +19,7 @@ class RedisService:
     """Redis服务"""
 
     @staticmethod
-    def set(req: Request, key: str, value, expire_seconds: int) -> Awaitable:
+    async def set(req: Request, key: str, value, expire_seconds: int) -> Awaitable:
         """
         设置缓存
         :param req: 请求对象
@@ -28,12 +28,16 @@ class RedisService:
         :param expire_seconds: 过期时间，秒
         :return:
         """
-        return req.app.state.cache.set(name=key, value=value, ex=expire_seconds)
+        return await req.app.state.cache.set(name=key, value=value, ex=expire_seconds)
 
 
 class RedisKey:
     """Redis键处理"""
 
-    @staticmethod
-    def message_id_key(message_id) -> str:
-        return '{}:message_id:{}'.format(REDIS_CACHE_ROOT_KEY, message_id)
+    @classmethod
+    def message_status(cls, message_id):
+        return '{}:message_status:{}'.format(REDIS_CACHE_ROOT_KEY, message_id)
+
+    @classmethod
+    def message_content(cls, message_id):
+        return '{}:message_content:{}'.format(REDIS_CACHE_ROOT_KEY, message_id)
