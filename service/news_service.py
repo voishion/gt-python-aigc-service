@@ -50,7 +50,7 @@ class NewsService(object):
 
         return agent.run(prompt_chain[0])
 
-    def search(self, prompt) -> str:
+    async def search(self, prompt) -> str:
         llm = ChatGLM3Remote()
         llm.load_model(server_url=settings.CHATGLM3_SERVER_URL)
         start_time = time.time()
@@ -62,6 +62,11 @@ class NewsService(object):
         finally:
             log.debug(f'执行耗时：{time.time() - start_time:.2f} s\n')
         return content
+
+
+def news_service() -> NewsService:
+    """新闻服务单例实例"""
+    return NewsService()
 
 
 if __name__ == "__main__":
@@ -105,16 +110,17 @@ if __name__ == "__main__":
     #     "帮我查询集团领导赴金砖国家新开发银行拜访交流相关信息？"
     # ])
 
-    while True:
-        query = input("请输入:")
-        if "end" == query:
-            break
-
-        begin_time = time.time()
-        try:
-            search = NewsService().search(prompt=query)
-            print(search)
-        except:
-            log.error(traceback.format_exc())
-        finally:
-            log.debug(f'执行耗时：{time.time() - begin_time:.2f} s\n')
+    # while True:
+    #     query = input("请输入:")
+    #     if "end" == query:
+    #         break
+    #
+    #     begin_time = time.time()
+    #     try:
+    #         search = NewsService().search(prompt=query)
+    #         print(search)
+    #     except:
+    #         log.error(traceback.format_exc())
+    #     finally:
+    #         log.debug(f'执行耗时：{time.time() - begin_time:.2f} s\n')
+    pass

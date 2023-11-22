@@ -33,5 +33,6 @@ class DBHolder(object):
         self.__redis = redis
 
 
-db_holder = DBHolder()
-"""数据操作对象持有器单例实例"""
+def db_holder():
+    """数据操作对象持有器单例实例"""
+    return DBHolder()

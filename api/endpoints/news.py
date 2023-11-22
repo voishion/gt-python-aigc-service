@@ -12,7 +12,7 @@ from fastapi import APIRouter
 
 from core.Response import success
 from schemas import news
-from service.news_service import NewsService
+from service.news_service import news_service
 
 router = APIRouter(prefix='')
 
@@ -24,5 +24,5 @@ router = APIRouter(prefix='')
     response_model=news.NewsSearchResp,
 )
 async def summary(post: news.NewsSearchReq):
-    result = NewsService().search(post.prompt)
+    result = await news_service().search(post.prompt)
     return success(msg="新闻搜索完成", data=result)

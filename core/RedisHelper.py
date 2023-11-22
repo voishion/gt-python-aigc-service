@@ -26,11 +26,11 @@ class RedisService:
         :param expire_seconds: 过期时间，秒
         :return:
         """
-        return await db_holder.redis.set(name=key, value=value, ex=expire_seconds)
+        return await db_holder().redis.set(name=key, value=value, ex=expire_seconds)
 
     @staticmethod
     async def get(key: str):
-        return await db_holder.redis.get(key)
+        return await db_holder().redis.get(key)
 
 
 class RedisKey:

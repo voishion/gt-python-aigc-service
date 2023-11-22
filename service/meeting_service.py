@@ -31,6 +31,7 @@ class MeetingService(object):
     """
     会议服务
     """
+
     openai.api_base = settings.CHATGLM3_SERVER_URL
     openai.api_key = "any"
 
@@ -168,5 +169,6 @@ class MeetingService(object):
         return content
 
 
-meeting_service = MeetingService()
-"""会议服务单例实例"""
+def meeting_service() -> MeetingService:
+    """会议服务单例实例"""
+    return MeetingService()
