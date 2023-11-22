@@ -34,14 +34,6 @@ class MeetingService(object):
     openai.api_base = settings.CHATGLM3_SERVER_URL
     openai.api_key = "any"
 
-    @staticmethod
-    def instance():
-        """
-        会议服务实例
-        :return:
-        """
-        return MeetingService()
-
     def __init__(self):
         super().__init__()
 
@@ -174,3 +166,7 @@ class MeetingService(object):
         if not content:
             raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "会议内容不存在")
         return content
+
+
+meeting_service = MeetingService()
+"""会议服务单例实例"""

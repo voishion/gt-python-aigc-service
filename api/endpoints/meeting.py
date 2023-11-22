@@ -10,12 +10,12 @@
 """
 from typing import Optional
 
-from fastapi import APIRouter, Query, Request
+from fastapi import APIRouter, Query
 from fastapi.responses import StreamingResponse
 
 from core.Response import success
 from schemas import meeting
-from service.meeting_service import MeetingService
+from service.meeting_service import meeting_service
 
 router = APIRouter(prefix='')
 
@@ -27,7 +27,7 @@ router = APIRouter(prefix='')
     response_model=meeting.MeetingMessageIdResp,
 )
 async def message_id(post: meeting.MeetingMessageIdReq):
-    result = await MeetingService().message_id(post.content)
+    result = await meeting_service.message_id(post.content)
     return success(msg="会议总结消息ID生成完成", data=result)
 
 
@@ -38,7 +38,7 @@ async def message_id(post: meeting.MeetingMessageIdReq):
     response_model=meeting.MeetingSummaryResp,
 )
 async def summary(post: meeting.MeetingSummaryReq):
-    result = await MeetingService().meeting_summary(post.message_id)
+    result = await meeting_service.meeting_summary(post.message_id)
     return success(msg="会议总结完成", data=result)
 
 
@@ -48,7 +48,7 @@ async def summary(post: meeting.MeetingSummaryReq):
     description="通过人工智能实现文字会议纪要的总结 (SSE)",
 )
 async def summary_sse(message_id: Optional[str] = Query(min_length=32, max_length=32, description="消息编号")):
-    generator = MeetingService().meeting_summary_sse(message_id)
+    generator = meeting_service.meeting_summary_sse(message_id)
     return StreamingResponse(generator, media_type="text/event-stream")
 
 
@@ -59,5 +59,5 @@ async def summary_sse(message_id: Optional[str] = Query(min_length=32, max_lengt
     response_model=meeting.MeetingSummaryStopResp,
 )
 async def summary(post: meeting.MeetingSummaryReq):
-    result = await MeetingService().meeting_summary_sse_stop(post.message_id)
+    result = await meeting_service.meeting_summary_sse_stop(post.message_id)
     return success(msg="会议总结停止操作完成", data=result)

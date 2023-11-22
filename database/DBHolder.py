@@ -21,6 +21,9 @@ class DBHolder(object):
 
     __redis = None
 
+    def __init__(self):
+        super().__init__()
+
     @property
     def redis(self) -> Redis:
         return self.__redis
@@ -30,9 +33,5 @@ class DBHolder(object):
         self.__redis = redis
 
 
-def get_instance():
-    """
-    获取数据操作对象持有器单例实例
-    :return:
-    """
-    return DBHolder()
+db_holder = DBHolder()
+"""数据操作对象持有器单例实例"""

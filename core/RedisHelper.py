@@ -11,7 +11,7 @@
 from typing import Awaitable
 
 from common.const import REDIS_CACHE_ROOT_KEY
-from database import DBHolder
+from database.DBHolder import db_holder
 
 
 class RedisService:
@@ -26,11 +26,11 @@ class RedisService:
         :param expire_seconds: 过期时间，秒
         :return:
         """
-        return await DBHolder.get_instance().redis.set(name=key, value=value, ex=expire_seconds)
+        return await db_holder.redis.set(name=key, value=value, ex=expire_seconds)
 
     @staticmethod
     async def get(key: str):
-        return await DBHolder.get_instance().redis.get(key)
+        return await db_holder.redis.get(key)
 
 
 class RedisKey:

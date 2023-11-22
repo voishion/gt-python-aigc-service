@@ -15,7 +15,7 @@ from fastapi import FastAPI
 from config import settings
 from core.Exts import openaiThreadPool
 from core.Logger import log
-from database import DBHolder
+from database.DBHolder import db_holder
 from database.redis import sys_cache
 
 
@@ -31,7 +31,7 @@ def startup(app: FastAPI) -> Callable:
         log.info("{}已启动", settings.PROJECT_NAME)
         # 注册数据库
         # await register_mysql(app)
-        DBHolder.get_instance().redis = await sys_cache()
+        db_holder.redis = await sys_cache()
         app.state.openai_thread_pool = await openaiThreadPool()
 
         pass
@@ -49,7 +49,7 @@ def stopping(app: FastAPI) -> Callable:
     async def stop_app() -> None:
         # APP停止时触发
         log.info("{}已停止", settings.PROJECT_NAME)
-        cache = DBHolder.get_instance().redis
+        cache = db_holder.redis
         await cache.close()
 
     return stop_app
