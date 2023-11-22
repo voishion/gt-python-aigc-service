@@ -107,32 +107,37 @@ class MeetingService(object):
         :param message_id: 消息编号
         :return: 会议总结推送生成器
         """
-        content = await self.__check_and_get_content(message_id)
+        content = await RedisService.get(RedisKey.message_content(message_id))
 
         yield "event:initializing\ndata:Initializing...\n\n"
 
-        messages = [
-            {"role": "system", "content": self.__get_system_prompt()},
-            {"role": "user", "content": self.__get_user_prompt(content)}
-        ]
-        start_time = time.time()
-        try:
-            response = await self.__get_model_response(messages=messages)
-            log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
-            for chunk in response:
-                msg_status = await RedisService.get(RedisKey.message_status(message_id))
-                if MessageStatus.STOP == msg_status:
-                    response.close()
-                    break
-                delta = chunk.choices[0].delta
-                if "content" in delta:
-                    _content = delta['content']
-                    if _content:
-                        yield "data:{}\n\n".format(_content)
-                        await asyncio.sleep(0.5)
-        except Exception as e:
-            log.exception("发生异常：%s", str(e))
-            yield "data:{}\n\n".format(self.__get_exp_msg(e))
+        if content:
+            await RedisService.set(RedisKey.message_status(message_id), MessageStatus.NORMAL.value, 24 * 60 * 60)
+
+            messages = [
+                {"role": "system", "content": self.__get_system_prompt()},
+                {"role": "user", "content": self.__get_user_prompt(content)}
+            ]
+            start_time = time.time()
+            try:
+                response = await self.__get_model_response(messages=messages)
+                log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
+                for chunk in response:
+                    msg_status = await RedisService.get(RedisKey.message_status(message_id))
+                    if MessageStatus.STOP.value == msg_status:
+                        response.close()
+                        break
+                    delta = chunk.choices[0].delta
+                    if "content" in delta:
+                        _content = delta['content']
+                        if _content:
+                            yield "data:{}\n\n".format(_content)
+                            await asyncio.sleep(0.5)
+            except Exception as e:
+                log.exception("发生异常：%s", str(e))
+                yield "data:{}\n\n".format(self.__get_exp_msg(e))
+        else:
+            yield "data:{}\n\n".format('会议内容不存在')
 
         # 处理完成
         yield "event:completed\ndata:Completed\n\n"
@@ -167,5 +172,5 @@ class MeetingService(object):
         """
         content = await RedisService.get(RedisKey.message_content(message_id))
         if not content:
-            raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "消息内容不存在")
+            raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "会议内容不存在")
         return content
