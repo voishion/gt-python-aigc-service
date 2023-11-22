@@ -18,6 +18,8 @@ from pydantic_settings import BaseSettings
 class Config(BaseSettings):
     # 加载环境变量
     load_dotenv(find_dotenv(".env.{}".format(os.getenv("RUN_ENV", "test"))), override=True)
+    # 运行环境
+    RUN_ENV: str = os.getenv("RUN_ENV", "test")
     # 日志打印级别
     LOG_PATH: str = "logs"
     # 日志打印级别，DEBUG、INFO、WARNING、ERROR、CRITICAL

@@ -17,6 +17,7 @@ from fastapi.responses import StreamingResponse
 
 from config import settings
 from core import Utils
+from core.Logger import log
 from core.Response import success
 from schemas import meeting
 from service.meeting_service import meeting_service
@@ -100,8 +101,8 @@ async def lfasr_info(
     response_model=meeting.MeetingSummaryResp,
 )
 async def test():
-    print(os.getenv("RUN_ENV"))
-    print(os.getenv("VERSION"))
-    print(settings.VERSION)
-    print(settings.LOG_LEVEL)
+    log.info(os.getenv("RUN_ENV"))
+    log.info(os.getenv("VERSION"))
+    log.info(settings.VERSION)
+    log.info(settings.LOG_LEVEL)
     return success(msg="查询完成", data="success")
