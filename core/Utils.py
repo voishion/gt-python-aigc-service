@@ -12,6 +12,7 @@
 import hashlib
 import random
 import uuid
+
 from passlib.handlers.pbkdf2 import pbkdf2_sha256
 
 
@@ -92,3 +93,15 @@ def simple_uuid4() -> str:
     :return: UUID，如：dd318b1b11ab4e7f9fd68b73b7799446
     """
     return uuid4().replace('-', '')
+
+
+def convert_hours_to_hms(hours):
+    """
+    将传入的小时数转换为友好的时分秒格式
+    :param hours: 小时数，如：3.99754841
+    :return: 时分秒，如：03时59分51秒
+    """
+    total_seconds = int(hours * 3600)
+    h, remainder = divmod(total_seconds, 3600)
+    m, s = divmod(remainder, 60)
+    return "{:02}时{:02}分{:02}秒".format(h, m, s)

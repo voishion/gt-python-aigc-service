@@ -10,9 +10,11 @@
 """
 from typing import Optional
 
+import requests
 from fastapi import APIRouter, Query
 from fastapi.responses import StreamingResponse
 
+from core import Utils
 from core.Response import success
 from schemas import meeting
 from service.meeting_service import meeting_service
@@ -61,3 +63,29 @@ async def summary_sse(message_id: Optional[str] = Query(min_length=32, max_lengt
 async def summary(post: meeting.MeetingSummaryReq):
     result = await meeting_service().meeting_summary_sse_stop(post.message_id)
     return success(msg="会议总结停止操作完成", data=result)
+
+
+@router.get(
+    path='/lfasr-info',
+    summary="语音转写当前套餐详情",
+    description="获取科大讯飞语音转写当前套餐详情",
+    response_model=meeting.LfasrInfoResp,
+)
+async def lfasr_info(
+        appId: Optional[str] = Query(description="appId"),
+        account_id: Optional[str] = Query(description="account_id"),
+        ssoSessionId: Optional[str] = Query(description="ssoSessionId"),
+):
+    headers = {
+        "Cookie": "ssoSessionId={}; account_id={};".format(ssoSessionId, account_id),
+    }
+    url = "https://console.xfyun.cn/dashboard/lfasr/getlfasrInfo?appId={}".format(appId)
+    resp = requests.post(url, headers=headers)
+    resp.raise_for_status()
+    data_info = resp.json()['data'][0]
+    result = {
+        'count': Utils.convert_hours_to_hms(data_info['count']),
+        'leftCount': Utils.convert_hours_to_hms(data_info['leftCount'])
+    }
+
+    return success(msg="查询完成", data=result)

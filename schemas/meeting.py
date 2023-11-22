@@ -33,3 +33,12 @@ class MeetingSummaryResp(BaseResp):
 
 class MeetingSummaryStopResp(BaseResp):
     data: Optional[bool] = Field(description="停止结果：true-成功，false-失败")
+
+
+class LfasrInfo(BaseModel):
+    count: Optional[str] = Field(description="套餐时长")
+    leftCount: Optional[str] = Field(description="剩余时长")
+
+
+class LfasrInfoResp(BaseResp):
+    data: LfasrInfo
