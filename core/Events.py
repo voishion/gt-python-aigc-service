@@ -28,8 +28,8 @@ def startup(app: FastAPI) -> Callable:
 
     async def app_start() -> None:
         # APP启动完成后触发
-        log.info("{}已启动", settings.PROJECT_NAME)
         log.info("RUN_ENV:{}", settings.RUN_ENV)
+        log.info("{}已启动", settings.PROJECT_NAME)
         # 注册数据库
         # await register_mysql(app)
         db_holder().redis = await sys_cache()
