@@ -8,12 +8,14 @@
     Site    : https://gitee.com/voishion
     Project : gt-python-aigc-service
 """
+import os
 from typing import Optional
 
 import requests
 from fastapi import APIRouter, Query
 from fastapi.responses import StreamingResponse
 
+from config import settings
 from core import Utils
 from core.Response import success
 from schemas import meeting
@@ -89,3 +91,16 @@ async def lfasr_info(
     }
 
     return success(msg="查询完成", data=result)
+
+
+@router.get(
+    path='/test',
+    summary="test",
+    description="test",
+    response_model=meeting.MeetingSummaryResp,
+)
+async def test():
+    print(os.getenv("RUN_ENV", "test"))
+    print(os.getenv("VERSION"))
+    print(settings.VERSION)
+    return success(msg="查询完成", data="success")
