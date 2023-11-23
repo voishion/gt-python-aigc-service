@@ -37,7 +37,7 @@ class NacosConfig(object):
         self.__nacos_config[key] = value
         return value
 
-    def get(self, key, default_value):
+    def get(self, key, default_value=None):
         """
         获取值
         :param key: 键
@@ -53,8 +53,19 @@ class NacosConfig(object):
                 return None
 
     @property
-    def redis(self):
-        return self.get('redis')
+    def LFASR_APP_ID(self):
+        """科大讯飞_语音转写_APPID"""
+        return self.get('LFASR_APP_ID')
+
+    @property
+    def LFASR_ACCOUNT_ID(self):
+        """科大讯飞_语音转写_ACCOUNT_ID"""
+        return self.get('LFASR_ACCOUNT_ID')
+
+    @property
+    def LFASR_SSO_SESSION_ID(self):
+        """科大讯飞_语音转写_SSO_SESSION_ID"""
+        return self.get('LFASR_SSO_SESSION_ID')
 
 
 # def nacos_config() -> NacosConfig:

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0,minimum-scale=1,maximum=scale=1">
-    <title>智慧通用-{{ title }}</title>
+    <title>智慧通用-{{ resp.title }}</title>
     <link rel="shortcut icon" href="{{ url_for('static', path='/favicon.ico') }}" type="image/x-icon">
     <meta name="theme-color" content="#00C66B"/>
     <link href="{{ url_for('static', path='/css/css-PlayfairDisplay.css') }}" rel="stylesheet"/>
@@ -18,7 +18,7 @@
         <div class="hero-content">
             <div class="hero-banner">
                 <h4>
-                    <div>{{ title }}</div>
+                    <div>{{ resp.title }}</div>
                 </h4>
                 <br>
                 <div class="landing-buttons">
@@ -39,7 +39,7 @@
                                href="/api/v1/meeting/summary-sse?message_id=50b93a392b4448ca8fb13f108671c9a6"
                                target="_blank"><i class="zm zm-APIguanli"> SSE</i></a>
                             <a class="linkedin"
-                               href="/api/v1/meeting/lfasr-info?appId=1e24997b&account_id=17849489893&ssoSessionId=a829939b-36e2-4725-9f49-a7da0ac0ebb2"
+                               href="/api/v1/meeting/lfasr-info?appId={{ resp.lfasr_app_id }}&account_id={{ resp.lfasr_account_id }}&ssoSessionId={{ resp.lfasr_sso_session_id }}"
                                target="_blank"><i class="zm zm-APIguanli"> LFASR</i></a>
                         </li>
                     </ul>

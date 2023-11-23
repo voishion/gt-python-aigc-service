@@ -76,10 +76,16 @@ async def summary(post: meeting.MeetingSummaryReq):
     response_model=meeting.LfasrInfoResp,
 )
 async def lfasr_info(
-        appId: Optional[str] = Query(description="appId"),
-        account_id: Optional[str] = Query(description="account_id"),
-        ssoSessionId: Optional[str] = Query(description="ssoSessionId"),
+        appId: Optional[str] = Query(default=None, description="appId"),
+        account_id: Optional[str] = Query(default=None, description="account_id"),
+        ssoSessionId: Optional[str] = Query(default=None, description="ssoSessionId"),
 ):
+    if not appId:
+        appId = nacos_config.LFASR_APP_ID
+    if not account_id:
+        account_id = nacos_config.LFASR_ACCOUNT_ID
+    if not ssoSessionId:
+        ssoSessionId = nacos_config.LFASR_SSO_SESSION_ID
     headers = {
         "Cookie": "ssoSessionId={}; account_id={};".format(ssoSessionId, account_id),
     }
