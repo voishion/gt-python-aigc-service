@@ -15,5 +15,3 @@ langchain~=0.0.336
 arxiv
 requests~=2.31.0
 pyyaml~=6.0.1
-
-nacos-sdk-python
