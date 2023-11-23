@@ -67,9 +67,9 @@ class Config(BaseSettings):
     # Nacos分组
     NACOS_GROUP: str = "DEFAULT_GROUP"
     # Nacos数据编号
-    NACOS_DATA_ID: str = "{}-{}.yaml".format(PROJECT_NAME, RUN_ENV)
+    NACOS_DATA_ID: str = PROJECT_NAME
     # Nacos配置文件格式
-    NACOS_CONFIG_TYPE: str = NacosConfigType.YAML.value
+    NACOS_CONFIG_TYPE: str = NacosConfigType.PROPERTIES.value
 
 
 settings = Config()
