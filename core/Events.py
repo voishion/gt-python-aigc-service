@@ -8,6 +8,7 @@
     Site    : https://gitee.com/voishion
     Project : gt-python-aigc-service
 """
+import asyncio
 from typing import Callable
 
 from fastapi import FastAPI
@@ -15,6 +16,7 @@ from fastapi import FastAPI
 from config import settings
 from core.Exts import openaiThreadPool
 from core.Logger import log
+from core.Nacos import nacos_event_listener
 from database.DBHolder import db_holder
 from database.redis import sys_cache
 
@@ -34,7 +36,8 @@ def startup(app: FastAPI) -> Callable:
         # await register_mysql(app)
         db_holder().redis = await sys_cache()
         app.state.openai_thread_pool = await openaiThreadPool()
-
+        # Nacos事件监听
+        asyncio.create_task(nacos_event_listener())
         pass
 
     return app_start

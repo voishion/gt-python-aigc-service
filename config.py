@@ -54,5 +54,14 @@ class Config(BaseSettings):
     # 天气接口KEY
     SENIVERSE_KEY: str = "Sp-dfPkJHO8lvb055"
 
+    # Nacos连接地址
+    NACOS_SERVER_ADDRESSES: str = "localhost:8848"
+    # Nacos命名空间
+    NACOS_NAMESPACE: str = "public"
+    # Nacos用户名
+    NACOS_USERNAME: str = 'nacos'
+    # Nacos密码
+    NACOS_PASSWORD: str = 'nacos'
+
 
 settings = Config()

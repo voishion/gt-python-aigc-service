@@ -34,7 +34,8 @@ __all__ = ["log", "Loggers"]
 
 # 不记录日志的日志名称
 EXCLUDE_LOG_NAME = {
-    'uvicorn.protocols.http.httptools_impl'
+    'uvicorn.protocols.http.httptools_impl',
+    'nacos.client'
 }
 
 

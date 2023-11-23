@@ -18,6 +18,7 @@ from fastapi.responses import StreamingResponse
 from config import settings
 from core import Utils
 from core.Logger import log
+from core.Nacos import nacosConfig
 from core.Response import success
 from schemas import meeting
 from service.meeting_service import meeting_service
@@ -105,4 +106,5 @@ async def test():
     log.info(os.getenv("VERSION"))
     log.info(settings.VERSION)
     log.info(settings.LOG_LEVEL)
+    log.info(nacosConfig.get('JSOSH', '---'))
     return success(msg="查询完成", data="success")
