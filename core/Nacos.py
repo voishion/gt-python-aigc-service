@@ -11,17 +11,64 @@
 
 import nacos
 
+from common.singleton import singleton
 from config import settings
 from core.Logger import log
+
+
+@singleton
+class NacosConfig(object):
+    """
+    Nacos配置信息
+    """
+
+    __nacos_config = {}
+
+    def __init__(self):
+        super().__init__()
+
+    def set(self, key, value):
+        """
+        设置值
+        :param key: 键
+        :param value: 值
+        :return: 值
+        """
+        self.__nacos_config[key] = value
+        return value
+
+    def get(self, key, default_value):
+        """
+        获取值
+        :param key: 键
+        :param default_value: 默认值
+        :return: 值
+        """
+        if key in self.__nacos_config:
+            return self.__nacos_config.get(key)
+        else:
+            if default_value:
+                return default_value
+            else:
+                return None
+
+    @property
+    def redis(self):
+        return self.get('redis')
+
+
+# def nacos_config() -> NacosConfig:
+#     """Nacos配置信息单例实例"""
+#     return NacosConfig()
+
+nacos_config: NacosConfig = NacosConfig()
+"""Nacos配置信息单例实例"""
 
 client = nacos.NacosClient(settings.NACOS_SERVER_ADDRESSES,
                            namespace=settings.NACOS_NAMESPACE,
                            username=settings.NACOS_USERNAME,
                            password=settings.NACOS_PASSWORD)
 """NacosClient连接对象"""
-
-nacosConfig = {}
-"""Nacos配置信息"""
 
 
 def refresh_properties_config(config_list):
@@ -30,11 +77,10 @@ def refresh_properties_config(config_list):
     :param config_list:
     :return:
     """
-    global nacosConfig
     for config_item in config_list:
         if config_item.find('=') > 0:
             strs = config_item.replace('\n', '').split('=')
-            nacosConfig[strs[0]] = strs[1]
+            nacos_config.set(strs[0], strs[1])
 
 
 async def init(data_id, group):
