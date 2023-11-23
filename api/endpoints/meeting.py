@@ -8,16 +8,13 @@
     Site    : https://gitee.com/voishion
     Project : gt-python-aigc-service
 """
-import os
 from typing import Optional
 
 import requests
 from fastapi import APIRouter, Query
 from fastapi.responses import StreamingResponse
 
-from config import settings
 from core import Utils
-from core.Logger import log
 from core.Nacos import nacos_config
 from core.Response import success
 from schemas import meeting
