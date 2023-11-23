@@ -14,6 +14,8 @@ from typing import List
 from dotenv import load_dotenv, find_dotenv
 from pydantic_settings import BaseSettings
 
+from common.enums import NacosConfigType
+
 
 class Config(BaseSettings):
     # 加载环境变量
@@ -62,6 +64,8 @@ class Config(BaseSettings):
     NACOS_USERNAME: str = 'nacos'
     # Nacos密码
     NACOS_PASSWORD: str = 'nacos'
+    # Nacos配置文件格式
+    NACOS_CONFIG_TYPE: str = NacosConfigType.YAML.value
 
 
 settings = Config()

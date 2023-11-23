@@ -10,7 +10,9 @@
 """
 
 import nacos
+import yaml
 
+from common.enums import NacosConfigType
 from common.singleton import singleton
 from config import settings
 from core.Logger import log
@@ -52,6 +54,13 @@ class NacosConfig(object):
             else:
                 return None
 
+    def clear(self):
+        """
+        清空配置
+        :return:
+        """
+        self.__nacos_config.clear()
+
     @property
     def LFASR_APP_ID(self):
         """科大讯飞_语音转写_APPID"""
@@ -68,10 +77,6 @@ class NacosConfig(object):
         return self.get('LFASR_SSO_SESSION_ID')
 
 
-# def nacos_config() -> NacosConfig:
-#     """Nacos配置信息单例实例"""
-#     return NacosConfig()
-
 nacos_config: NacosConfig = NacosConfig()
 """Nacos配置信息单例实例"""
 
@@ -82,16 +87,38 @@ client = nacos.NacosClient(settings.NACOS_SERVER_ADDRESSES,
 """NacosClient连接对象"""
 
 
-def refresh_properties_config(config_list):
+def refresh_config(config_list):
     """
     刷新properties配置
     :param config_list:
     :return:
     """
+    nacos_config.clear()
     for config_item in config_list:
         if config_item.find('=') > 0:
             strs = config_item.replace('\n', '').split('=')
             nacos_config.set(strs[0], strs[1])
+
+
+def convert_to_list(data_dist):
+    """
+    转列表
+    :param data_dist:
+    :return:
+    """
+
+    def flatten_dict(data, parent_key='', sep='_'):
+        items = []
+        for key, value in data.items():
+            new_key = f"{parent_key}{sep}{key}" if parent_key else key
+            if isinstance(value, dict):
+                items.extend(flatten_dict(value, new_key, sep=sep).items())
+            else:
+                items.append((new_key, value))
+        return dict(items)
+
+    flattened_data = flatten_dict(data_dist)
+    return ['{}={}'.format(k, v) for k, v in flattened_data.items()]
 
 
 async def init(data_id, group):
@@ -101,9 +128,13 @@ async def init(data_id, group):
     :param group:
     :return:
     """
-    # 换行符进行分割，存入列表中
-    config_list = client.get_config(data_id, group).split("\n")
-    refresh_properties_config(config_list)
+    config_type = settings.NACOS_CONFIG_TYPE
+    if NacosConfigType.PROPERTIES.value == config_type:
+        config_list = client.get_config(data_id, group).split("\n")
+    else:
+        config_data = yaml.load(client.get_config(data_id, group), Loader=yaml.FullLoader)
+        config_list = convert_to_list(config_data)
+    refresh_config(config_list)
     log.info("Nacos配置初始化...")
 
 
@@ -113,18 +144,29 @@ def nacos_data_change_callback(config):
     :param config:
     :return:
     """
-    config_list = config['content'].split("\n")
-    refresh_properties_config(config_list)
+    config_type = settings.NACOS_CONFIG_TYPE
+    if NacosConfigType.PROPERTIES.value == config_type:
+        config_list = config['content'].split("\n")
+    else:
+        config_data = yaml.load(config['content'], Loader=yaml.FullLoader)
+        config_list = convert_to_list(config_data)
+    refresh_config(config_list)
     log.info("Nacos配置更新...")
 
 
 async def nacos_event_listener():
+    format_list = [x.value for x in NacosConfigType]
+    config_type = settings.NACOS_CONFIG_TYPE
+    if config_type not in format_list:
+        raise TypeError(
+            '系统仅支持{}格式的nacos配置解析，不支持{}格式，请切换格式与配置'.format(','.join(format_list), config_type))
+
     """
     Nacos事件监听
     :return:
     """
     group = "DEFAULT_GROUP"
-    data_id = "{}-{}.properties".format(settings.PROJECT_NAME, settings.RUN_ENV)
+    data_id = "{}-{}.yaml".format(settings.PROJECT_NAME, settings.RUN_ENV)
 
     # 初始化
     await init(data_id, group)

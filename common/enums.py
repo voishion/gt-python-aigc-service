@@ -39,5 +39,22 @@ class MessageStatus(Enum):
         return self.name
 
 
+class NacosConfigType(Enum):
+    """
+    Nacos配置文件类型，目前仅支持Properties和YAML类型
+    """
+
+    PROPERTIES = 'Properties'
+    """Properties"""
+
+    YAML = 'YAML'
+    """YAML"""
+
+    def __str__(self):
+        return self.name
+
+
 if __name__ == '__main__':
-    print(MessageStatus.NORMAL.value)
+    format_ = [x.value for x in NacosConfigType]
+    print('Propertiess' in format_)
+

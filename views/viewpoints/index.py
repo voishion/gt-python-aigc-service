@@ -27,8 +27,8 @@ async def index(request: Request):
     """
     resp = IndexResp(
         title=settings.PROJECT_NAME,
-        lfasr_app_id=nacos_config.LFASR_APP_ID,
-        lfasr_account_id=nacos_config.LFASR_ACCOUNT_ID,
-        lfasr_sso_session_id=nacos_config.LFASR_SSO_SESSION_ID
+        lfasr_app_id=nacos_config.LFASR_APP_ID or '',
+        lfasr_account_id=nacos_config.LFASR_ACCOUNT_ID or '',
+        lfasr_sso_session_id=nacos_config.LFASR_SSO_SESSION_ID or ''
     )
     return request.app.state.views.TemplateResponse("index.html", {"request": request, "resp": resp})
