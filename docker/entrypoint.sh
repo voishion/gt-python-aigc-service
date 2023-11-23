@@ -17,7 +17,7 @@ fi
 
 # AIGC_SERVICE_EXEC is empty, use ‘python app.py’
 if [ "$AIGC_SERVICE_EXEC" == "" ] ; then
-    AIGC_SERVICE_EXEC="python -m uvicorn app:app --reload --host 0.0.0.0 --port 9000"
+    AIGC_SERVICE_EXEC="python -m uvicorn app:app --host 0.0.0.0 --port 9000"
 fi
 
 # go to prefix dir
