@@ -107,7 +107,7 @@ def convert_to_list(data_dist):
     :return:
     """
 
-    def flatten_dict(data, parent_key='', sep='_'):
+    def flatten_dict(data, parent_key='', sep='.'):
         items = []
         for key, value in data.items():
             new_key = f"{parent_key}{sep}{key}" if parent_key else key
@@ -165,8 +165,8 @@ async def nacos_event_listener():
     Nacos事件监听
     :return:
     """
-    group = "DEFAULT_GROUP"
-    data_id = "{}-{}.yaml".format(settings.PROJECT_NAME, settings.RUN_ENV)
+    group = settings.NACOS_GROUP
+    data_id = settings.NACOS_DATA_ID
 
     # 初始化
     await init(data_id, group)

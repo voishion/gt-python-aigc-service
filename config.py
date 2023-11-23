@@ -64,6 +64,10 @@ class Config(BaseSettings):
     NACOS_USERNAME: str = 'nacos'
     # Nacos密码
     NACOS_PASSWORD: str = 'nacos'
+    # Nacos分组
+    NACOS_GROUP: str = "DEFAULT_GROUP"
+    # Nacos数据编号
+    NACOS_DATA_ID: str = "{}-{}.yaml".format(PROJECT_NAME, RUN_ENV)
     # Nacos配置文件格式
     NACOS_CONFIG_TYPE: str = NacosConfigType.YAML.value
 
