@@ -99,18 +99,3 @@ async def lfasr_info(
     }
 
     return success(msg="查询完成", data=result)
-
-
-@router.get(
-    path='/test',
-    summary="test",
-    description="test",
-    response_model=meeting.MeetingSummaryResp,
-)
-async def test():
-    log.info(os.getenv("RUN_ENV"))
-    log.info(os.getenv("VERSION"))
-    log.info(settings.VERSION)
-    log.info(settings.LOG_LEVEL)
-    log.info(nacos_config.get('JSOSH', '---'))
-    return success(msg="查询完成", data="success")
