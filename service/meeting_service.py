@@ -39,15 +39,11 @@ class MeetingService(object):
         super().__init__()
 
     def __get_system_prompt(self) -> str:
-        return (
-            ('You are Smart Xiaotong, the large-model artificial intelligence assistant of General Technology Group. '
-             'Today is {}, and the current time is {}, Answer the following questions as best as you can. You have '
-             'access to the following tools:')
-            .format(datetime.now().strftime(DATE_FORMAT),
-                    datetime.now().strftime(TIME_FORMAT)))
+        return ('你是通用科技集团的大模人工智能助手智慧小通。 今天是{}，当前时间是{}，请尽可能使用中文回答以下问题：'
+                .format(datetime.now().strftime(DATE_FORMAT), datetime.now().strftime(TIME_FORMAT)))
 
     def __get_user_prompt(self, content: str) -> str:
-        return ('请将以下文本总结成会议纪要，重点在于会议核心思想以及会议内容，文本中包含说话人姓名和发言时间范围，请使用中文回复，'
+        return ('请将以下文本总结成会议纪要，重点在于会议核心思想以及会议内容，文本中包含说话人姓名和发言时间范围，'
                 '文本内容如下：\n\n{}').format(content)
 
     async def __get_model_response(self, messages, stream=True):
@@ -124,6 +120,8 @@ class MeetingService(object):
                     if "content" in delta:
                         _content = delta['content']
                         if _content:
+                            if '\n' == _content:
+                                _content = '\\n'
                             yield "data:{}\n\n".format(_content)
                             await asyncio.sleep(0.1)
             except Exception as e:

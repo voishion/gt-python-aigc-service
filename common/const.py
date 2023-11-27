@@ -10,7 +10,7 @@
 """
 from config import settings
 
-DATE_FORMAT = "%B %d, %Y"
+DATE_FORMAT = "%Y年%M月%d日"
 TIME_FORMAT = "%H:%M"
 
 CHATGLM3_6B = "chatglm3-6b"
