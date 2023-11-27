@@ -125,7 +125,7 @@ class MeetingService(object):
                         _content = delta['content']
                         if _content:
                             yield "data:{}\n\n".format(_content)
-                            await asyncio.sleep(0.5)
+                            await asyncio.sleep(0.1)
             except Exception as e:
                 log.exception("发生异常：%s", str(e))
                 yield "data:{}\n\n".format(self.__get_exp_msg(e))
