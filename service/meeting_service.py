@@ -13,6 +13,7 @@ import time
 from datetime import datetime
 
 import openai
+import requests
 from starlette import status
 from starlette.exceptions import HTTPException
 
@@ -84,7 +85,7 @@ class MeetingService(object):
             response = await self.__get_model_response(messages=messages, stream=False)
             result = response['choices'][0]['message']['content']
         except Exception as e:
-            log.exception("发生异常：%s", str(e))
+            log.exception('发生异常: {}', e, exc_info=True)
             result = self.__get_exp_msg(e)
         finally:
             log.debug(f'请求耗时：{time.time() - start_time:.2f} s')
@@ -125,7 +126,7 @@ class MeetingService(object):
                             yield "data:{}\n\n".format(_content)
                             await asyncio.sleep(0.1)
             except Exception as e:
-                log.exception("发生异常：%s", str(e))
+                log.exception('发生异常: {}', e, exc_info=True)
                 yield "data:{}\n\n".format(self.__get_exp_msg(e))
         else:
             yield "data:{}\n\n".format('会议内容不存在')
@@ -153,6 +154,9 @@ class MeetingService(object):
         if isinstance(e, openai.error.APIError):
             if 'API rate limit exceeded' == e.json_body['message']:
                 msg = '请求次数超限，请稍后再试'
+        if isinstance(e, requests.exceptions.ChunkedEncodingError):
+            if 'Connection broken: InvalidChunkLength' in str(e):
+                msg = '会议内容过长，无法生成会议纪要'
         return msg
 
     async def __check_and_get_content(self, message_id) -> str:

@@ -57,7 +57,7 @@ class NewsService(object):
         try:
             content = self.__run_tool([News()], llm, [prompt])
         except Exception as e:
-            log.exception("发生异常：%s", str(e))
+            log.exception('发生异常: {}', e, exc_info=True)
             raise HTTPException(status.HTTP_502_BAD_GATEWAY, "操作失败，请稍后再试")
         finally:
             log.debug(f'执行耗时：{time.time() - start_time:.2f} s\n')
