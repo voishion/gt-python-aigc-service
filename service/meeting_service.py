@@ -156,7 +156,7 @@ class MeetingService(object):
                 msg = '请求次数超限，请稍后再试'
         if isinstance(e, requests.exceptions.ChunkedEncodingError):
             if 'Connection broken: InvalidChunkLength' in str(e):
-                msg = '会议内容过长，无法生成会议纪要'
+                msg = 'LLM连接失败，请稍后再试'
         return msg
 
     async def __check_and_get_content(self, message_id) -> str:
