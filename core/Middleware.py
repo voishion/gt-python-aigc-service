@@ -18,7 +18,7 @@ from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Receive, Scope, Send, Message
 
 from common import const
-from common.const import IDP_SESSION, DEFAULT_IDP_SESSION, REQUEST_ID_KEY, TASK_ID_KEY
+from common.const import IDP_SESSION, DEFAULT_IDP_SESSION, REQUEST_ID_KEY, TASK_ID_KEY, AUTHORIZATION
 from core import Utils
 from core.Logger import log
 from core.Tl import IdpSession, TraceID
@@ -59,10 +59,17 @@ class RequestMiddleware(BaseHTTPMiddleware):
     """
     请求中间件
     """
+
     async def dispatch(self, request: Request, call_next):
         try:
             # log.debug("Request started")
-            idp_session = (request.cookies[IDP_SESSION] if IDP_SESSION in request.cookies else DEFAULT_IDP_SESSION)
+            idp_session = (request.cookies[IDP_SESSION] if IDP_SESSION in request.cookies else '')
+
+            if not idp_session:
+                idp_session = (request.headers[AUTHORIZATION] if AUTHORIZATION in request.headers else DEFAULT_IDP_SESSION)
+                if idp_session.startswith('Bearer '):
+                    idp_session = idp_session.replace('Bearer ', '')
+
             IdpSession.set_idp_session(idp_session)
 
             req_id = request.headers.get(REQUEST_ID_KEY, const.EMPTY_STR)

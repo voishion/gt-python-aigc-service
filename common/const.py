@@ -18,6 +18,7 @@ CHATGLM3_6B = "chatglm3-6b"
 SSE_RETRY = 15000
 
 IDP_SESSION = "_idp_session"
+AUTHORIZATION = "Authorization"
 DEFAULT_IDP_SESSION = settings.PROJECT_NAME
 
 TASK_ID_KEY = "X-Task-Id"

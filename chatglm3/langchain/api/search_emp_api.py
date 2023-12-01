@@ -66,7 +66,7 @@ def __api_call(opt_type: int, url, data):
     try:
         headers = {
             "Content-Type": "application/json",
-            "Cookie": "_idp_session={}".format(IdpSession.get_idp_session()),
+            "_idp_session": "{}".format(IdpSession.get_idp_session()),
         }
         resp = requests.post(url, data=data, headers=headers)
         resp.raise_for_status()
