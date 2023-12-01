@@ -21,7 +21,7 @@ from common import const
 from common.const import IDP_SESSION, DEFAULT_IDP_SESSION, REQUEST_ID_KEY, TASK_ID_KEY, AUTHORIZATION
 from core import Utils
 from core.Logger import log
-from core.Tl import IdpSession, TraceID
+from core.PThreadLocal import IdpSession, TraceID
 from core.Utils import random_str
 
 

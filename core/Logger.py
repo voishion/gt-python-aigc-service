@@ -8,7 +8,7 @@
     Site    : https://gitee.com/voishion
     Project : gt-python-aigc-service
 """
-from core.Tl import TraceID
+from core.PThreadLocal import TraceID
 
 '''
     # <red>: 红色

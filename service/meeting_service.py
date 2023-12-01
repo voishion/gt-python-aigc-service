@@ -24,7 +24,7 @@ from config import settings
 from core import Utils
 from core.Logger import log
 from core.RedisHelper import RedisKey, RedisService
-from core.Tl import IdpSession
+from core.PThreadLocal import IdpSession
 
 
 @singleton

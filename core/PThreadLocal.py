@@ -3,7 +3,7 @@
 """
     Desc    : ThreadLocal集中处理
     Author  : Lu Li (李露)
-    File    : Tl.py
+    File    : PThreadLocal.py
     Date    : 2023/11/20 15:36
     Site    : https://gitee.com/voishion
     Project : gt-python-aigc-service
